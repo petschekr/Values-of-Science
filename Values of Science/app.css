@@ -1,7 +1,32 @@
-﻿body {
-    font-family: 'Segoe UI', sans-serif;
+﻿html, body {
+    height: 100%;
+    margin: 0;
+}
+body {
+    font-family: "Open Sans", sans-serif;
 }
 
-span {
-    font-style: italic;
+section.region {
+    height: 100%;
+    width: 50%;
+    box-sizing: border-box;
+}
+section.region:first-of-type {
+    border-right: 2px solid #363636;
+}
+section.region h1 {
+    text-align: center;
+}
+#cascadia {
+    float: left;
+}
+#london {
+    float: right;
+}
+#toolbox {
+    height: 80px;
+    width: 100%;
+    background-color: rgba(54, 54, 54, 0.8);
+    position: absolute;
+    bottom: 0;
 }
