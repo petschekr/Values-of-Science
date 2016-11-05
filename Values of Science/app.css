@@ -17,6 +17,10 @@ section.region:first-of-type {
 section.region h1 {
     text-align: center;
 }
+section.region .map {
+    height: 100%;
+    width: 100%;
+}
 #cascadia {
     float: left;
 }
@@ -26,7 +30,8 @@ section.region h1 {
 #toolbox {
     height: 80px;
     width: 100%;
-    background-color: rgba(54, 54, 54, 0.8);
+    background-color: rgba(255, 255, 255, 0.5);
     position: absolute;
     bottom: 0;
+    z-index: 1000;
 }

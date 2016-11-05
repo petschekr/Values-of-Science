@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="data\stop.png" />
     <Content Include="index.html" />
     <Content Include="web.config" />
   </ItemGroup>
@@ -30,6 +31,7 @@
     <TypeScriptCompile Include="app.ts" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\crossrail.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
