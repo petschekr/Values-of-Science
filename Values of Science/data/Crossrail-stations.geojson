@@ -1,0 +1,525 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Taplow"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.524,
+          -0.681
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Burnham"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.524,
+          -0.646
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Slough"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.512,
+          -0.592
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Langley"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.508,
+          -0.542
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Iver"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.509,
+          -0.507
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "West Drayton"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5099417,
+          -0.4722639
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Hayes & Harlington"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.502,
+          -0.4201
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Southall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.506,
+          -0.3783
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Hanwell"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5116,
+          -0.3389
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "West Ealing"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5137,
+          -0.3203
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Ealing Broadway"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5147,
+          -0.3017
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Acton Main Line"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5171,
+          -0.2668
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Old Oak Common"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.524873,
+          -0.24672
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Paddington"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5173,
+          -0.1774
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Bond Street"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.514,
+          -0.15
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Tottenham Court"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5162,
+          -0.1309
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Farringdon"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.520,
+          -0.1053
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Liverpool Street"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5186,
+          -0.0813
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Whitechapel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.519,
+          -0.061
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Canary Wharf"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5061,
+          -0.01578
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Custom House"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.509639,
+          0.025894
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Woolwich"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.491578,
+          0.071819
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Abbey Wood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.4910,
+          0.1214
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Gravesend"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.441317,
+          0.366692
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Stratford"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5422,
+          -0.0033
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Maryland"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.546,
+          0.0059
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Forest Gate"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5494,
+          0.0242
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Manor Park"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5526,
+          0.0463
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Ilford"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5592,
+          0.0700
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Seven Kings"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5635,
+          0.0969
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Goodmayes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5655,
+          0.1109
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Chadwell Heath"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5678,
+          0.1292
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Romford"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5749,
+          0.1827
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Gidea Park"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.582,
+          0.2063
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Harold Woof"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.5928,
+          0.2343
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Brentwood"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.6136,
+          0.3
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Shenfield"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.6307,
+          0.3297
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Reading"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.4590,
+          -0.9722
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Twyford"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.476,
+          -0.863
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Maidenhead"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.519,
+          -0.723
+        ]
+      }
+    }
+  ]
+}
