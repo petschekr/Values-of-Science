@@ -1,0 +1,395 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+		  "name": "Seattle",
+		  "population2010": 608660,
+		  "population2015": 684451
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.333056,
+          47.609722
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Spokane",
+		  "population2010": 208916,
+		  "population2015": 213272
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.425,
+          47.658889
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Tacoma",
+		  "population2010": 198397,
+		  "population2015": 207948
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.459444,
+          47.241389
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Vancouver",
+		  "population2010": 161791,
+		  "population2015": 172860
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.60000,
+          45.633333
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Bellevue",
+		  "population2010": 122363,
+		  "population2015": 139820
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.166667,
+          47.6
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Kent",
+		  "population2010": 92411,
+		  "population2015": 126952
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.226944,
+          47.382778
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Everett",
+		  "population2010": 103019,
+		  "population2015": 108010
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.200556,
+          47.963333
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Renton",
+		  "population2010": 90927,
+		  "population2015": 100242
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.195278,
+          47.486667
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Federal Way",
+		  "population2010": 89306,
+		  "population2015": 95171
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.35,
+          47.316667
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Yakima",
+		  "population2010": 91067,
+		  "population2015": 93701
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -120.506061,
+          46.602236
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Spokane Valley",
+		  "population2010": 89755,
+		  "population2015": 94919
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.239444,
+          47.673333
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Kirkland",
+		  "population2010": 48787,
+		  "population2015": 87281
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.191667,
+          47.685833
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Bellingham",
+		  "population2010": 80855,
+		  "population2015": 85146
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.475,
+          48.750278
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Kennewick",
+		  "population2010": 73917,
+		  "population2015": 78896
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -119.159167,
+          46.203611
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Auburn",
+		  "population2010": 70180,
+		  "population2015": 77006
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.214722,
+          47.302222
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Pasco",
+		  "population2010": 59781,
+		  "population2015": 69451
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -119.108611,
+          46.238611
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Marysville",
+		  "population2010": 60020,
+		  "population2015": 66773
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.163333,
+          48.062778
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Lakewood",
+		  "population2010": 58163,
+		  "population2015": 59829
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.533333,
+          47.166667
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Redmond",
+		  "population2010": 54144,
+		  "population2015": 60598
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.123889,
+          47.669444
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Shoreline",
+		  "population2010": 53007,
+		  "population2015": 55439
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.339722,
+          47.756389
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Richland",
+		  "population2010": 48058,
+		  "population2015": 54248
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -119.281389,
+          46.279722
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Sammamish",
+		  "population2010": 45780,
+		  "population2015": 52253
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.042222,
+          47.608889
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Burien",
+		  "population2010": 33313,
+		  "population2015": 50467
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.345556,
+          47.468333
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Olympia",
+		  "population2010": 46478,
+		  "population2015": 50302
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.893056,
+          47.0425
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Lacey",
+		  "population2010": 42393,
+		  "population2015": 46409
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.807222,
+          47.026389
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Edmonds",
+		  "population2010": 39709,
+		  "population2015": 41375
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.360133,
+          47.807869
+        ]
+      }
+    }
+  ]
+}

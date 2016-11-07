@@ -1,0 +1,185 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+		  "name": "Portland",
+		  "population2010": 583776,
+		  "population2015": 632309
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.681944,
+          45.52
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Salem",
+		  "population2010": 154637,
+		  "population2015": 164549
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.028889,
+          44.930833
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Eugene",
+		  "population2010": 156185,
+		  "population2015": 163460
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.086667,
+          44.051944
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Gresham",
+		  "population2010": 105594,
+		  "population2015": 110553
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.439444,
+          45.503611
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Hillsboro",
+		  "population2010": 91611,
+		  "population2015": 102347
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.983333,
+          45.516667
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Beaverton",
+		  "population2010": 89803,
+		  "population2015": 96577
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.803611,
+          45.486944
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Bend",
+		  "population2010": 76639,
+		  "population2015": 87014
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.315136,
+          44.058105
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Medford",
+		  "population2010": 74907,
+		  "population2015": 79805
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.861944,
+          42.331944
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Springfield",
+		  "population2010": 59403,
+		  "population2015": 60870
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.991111,
+          44.053056
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Corvallis",
+		  "population2010": 54462,
+		  "population2015": 55780
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.283333,
+          44.566667
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Albany",
+		  "population2010": 50158,
+		  "population2015": 52175
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.096111,
+          44.630278
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+		  "name": "Tigard",
+		  "population2010": 48035,
+		  "population2015": 51253
+	  },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.778889,
+          45.427778
+        ]
+      }
+    }
+  ]
+}

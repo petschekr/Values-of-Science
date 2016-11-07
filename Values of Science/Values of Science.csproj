@@ -23,6 +23,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="data\marker.png" />
+    <Content Include="data\marker_red.png" />
+    <Content Include="data\marker_white.png" />
     <Content Include="data\stop.png" />
     <Content Include="index.html" />
     <Content Include="web.config" />
@@ -31,7 +34,11 @@
     <TypeScriptCompile Include="app.ts" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\earthquakes.json" />
     <None Include="data\crossrail.json" />
+    <Content Include="data\oregon.json" />
+    <Content Include="data\washington.json" />
+    <Content Include="data\london-boroughs.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

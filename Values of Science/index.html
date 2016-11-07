@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
         <link rel="stylesheet" href="app.css" type="text/css" />
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.2/moment.min.js"></script>
         <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
         <script src="app.js"></script>
     </head>
@@ -21,7 +22,11 @@
             <div class="map" id="london-map"></div>
         </section>
         <section id="toolbox">
-
+            <div id="game-actions">
+                <button id="start" class="flat-button">Start</button>
+                <button id="reset" class="flat-button">Reset</button>
+            </div>
+            <h3 id="date"></h3>
         </section>
     </body>
 </html>
