@@ -241,16 +241,11 @@ function cascadiaInit() {
     });
 }
 
-let internalDate = moment();
-enum GameState {
-    Running, Paused
-}
-let gameState: GameState = GameState.Paused;
 let dialogs: Dialog[];
 let dialogContent = document.createElement("div");
 dialogContent.classList.add("dialog-content");
 
-window.onload = () => {
+function dialogInit() {
     $.getJSON("data/dialogs.json", function (json) {
         dialogs = json.dialogs;
 
@@ -298,16 +293,42 @@ window.onload = () => {
     document.querySelector("#cover > button").addEventListener("click", function () {
         document.getElementById("cover").style.display = "none";
     });
+}
 
+let internalDate = moment();
+enum GameState {
+    Running, Paused
+}
+let gameState: GameState = GameState.Paused;
+let cascadiaFunds: number = 10000;
+let londonFunds: number = 10000;
+
+window.onload = () => {
+    dialogInit();
     londonInit();
     cascadiaInit();
+
     let dateElement = document.getElementById("date");
-    setInterval(function () {
+    let cascadiaFundsElement = document.querySelector("#cascadia .funds");
+    let londonFundsElement = document.querySelector("#london .funds");
+    let lastDateUpdate: number = Date.now();
+
+    (function updateLoop() {
+        // Update status
         dateElement.textContent = internalDate.format("MMMM Do, Y");
+        cascadiaFundsElement.textContent = cascadiaFunds.toLocaleString();
+        londonFundsElement.textContent = londonFunds.toLocaleString();
+
         if (gameState === GameState.Running) {
-            internalDate = internalDate.add(1, "days");
+            if (Date.now() - lastDateUpdate > 500) {
+                internalDate = internalDate.add(1, "days");
+                lastDateUpdate = Date.now();
+            }
         }
-    }, 500);
+        window.requestAnimationFrame(updateLoop);
+    })();
+
+    // Button and other event handlers
     let startButton = document.getElementById("start");
     startButton.onclick = function () {
         if (gameState === GameState.Running) {

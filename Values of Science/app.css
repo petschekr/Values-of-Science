@@ -66,11 +66,32 @@ section.region .map {
     height: 100%;
     width: 100%;
 }
+section.region .funds {
+    position: absolute;
+    top: 24px;
+    color: white;
+    z-index: 1000;
+    font-weight: bold;
+    font-size: 1.5em;
+    text-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
+}
 #cascadia {
     float: left;
 }
+#cascadia .funds {
+    left: 64px;
+}
+#cascadia .funds::before {
+    content: "Budget: $";
+}
 #london {
     float: right;
+}
+#london .funds {
+    left: calc(50% + 64px);
+}
+#london .funds::before {
+    content: "Budget: £";
 }
 #toolbox {
     height: 80px;
