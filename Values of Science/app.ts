@@ -17,6 +17,46 @@ interface Dialog {
     text: string;
     timing?: number;
 }
+interface City {
+    name: string;
+    population2010: number;
+    population2015: number;
+}
+interface Earthquake {
+    mag: number; // 4.8,
+    place: string; // "Off the coast of Oregon",
+    time: number; // 1476040127540,
+    updated: number; // 1476198964000,
+    tz: number; // -540,
+    url: string; // "http://earthquake.usgs.gov/earthquakes/eventpage/us20007cz9",
+    detail: string; // "http://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us20007cz9&format=geojson",
+    felt: number // 5,
+    cdi: number; // 2.7,
+    mmi: any; // null,
+    alert: any; // null,
+    status: string; // "reviewed",
+    tsunami: number; // 0,
+    sig: number; // 356,
+    net: string; // "us",
+    code: string; // "20007cz9",
+    ids: string; // ",us20007cz9,",
+    sources: string; // ",us,",
+    types: string; // ",cap,dyfi,general-link,geoserve,moment-tensor,origin,phase-data,",
+    nst: any; // null,
+    dmin: number; // 3.868,
+    rms: number; // 0.94,
+    gap: number; // 166,
+    magType: string; // "mb",
+    type: string; // "earthquake",
+    title: string; // "M 4.8 - Off the coast of Oregon"
+}
+interface Borough {
+    population: number;
+    name: string;
+}
+interface Station {
+    name: string;
+}
 
 let londonStart: GeoPos = {
     coordinates: [51.508571, -0.125868],
@@ -46,7 +86,7 @@ function londonInit() {
         this.update();
         return this._div;
     };
-    info.update = function (props = null, selected = false) {
+    info.update = function (props: Station = null, selected = false) {
         if (!props) {
             this._div.innerHTML =
             `
@@ -113,7 +153,11 @@ function londonInit() {
 		};
     }
     function onEachBorough(feature, layer) {
-        layer.bindPopup(`<b>${feature.properties.name}</b><br />Population: ${feature.properties.population.toLocaleString()}`);
+        layer.bindPopup(`
+            <b>${feature.properties.name}</b>
+            <br />
+            Population: ${feature.properties.population.toLocaleString()} (2013 est.)
+        `);
     }
 
     let subwayStop = L.icon({
@@ -154,7 +198,7 @@ function cascadiaInit() {
         this.update();
         return this._div;
     };
-    info.update = function (props = null, selected = false) {
+    info.update = function (props: City = null, selected = false) {
         if (!props) {
             this._div.innerHTML =
             `
@@ -287,7 +331,9 @@ function dialogInit() {
                 paragraphElement.textContent = paragraph;
                 dialogContent.appendChild(paragraphElement);
             }
-            alertify.alert(dialog.title, dialogContent).set({ transition: "fade" });
+            alertify.alert(dialog.title, dialogContent, function () {
+                gameState = GameState.Running;
+            }).set({ transition: "fade" });
         });
     });
     document.querySelector("#cover > button").addEventListener("click", function () {
@@ -301,7 +347,7 @@ enum GameState {
 }
 let gameState: GameState = GameState.Paused;
 let cascadiaFunds: number = 10000;
-let londonFunds: number = 10000;
+let londonFunds: number = 15900000000;
 
 window.onload = () => {
     dialogInit();
@@ -329,7 +375,7 @@ window.onload = () => {
     })();
 
     // Button and other event handlers
-    let startButton = document.getElementById("start");
+    /*let startButton = document.getElementById("start");
     startButton.onclick = function () {
         if (gameState === GameState.Running) {
             gameState = GameState.Paused;
@@ -346,5 +392,5 @@ window.onload = () => {
         startButton.textContent = "Start";
         internalDate = moment();
         dateElement.textContent = internalDate.format("MMMM Do, Y");
-    };
+    };*/
 };

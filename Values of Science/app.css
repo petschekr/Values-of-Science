@@ -59,14 +59,14 @@ section.region {
 section.region:first-of-type {
     border-right: 3px solid #fff;
 }
-section.region h1 {
+section.region > h1 {
     text-align: center;
 }
-section.region .map {
+section.region > .map {
     height: 100%;
     width: 100%;
 }
-section.region .funds {
+section.region > .funds {
     position: absolute;
     top: 24px;
     color: white;
@@ -78,19 +78,19 @@ section.region .funds {
 #cascadia {
     float: left;
 }
-#cascadia .funds {
+#cascadia > .funds {
     left: 64px;
 }
-#cascadia .funds::before {
+#cascadia > .funds::before {
     content: "Budget: $";
 }
 #london {
     float: right;
 }
-#london .funds {
+#london > .funds {
     left: calc(50% + 64px);
 }
-#london .funds::before {
+#london > .funds::before {
     content: "Budget: £";
 }
 #toolbox {
@@ -105,21 +105,34 @@ section.region .funds {
     box-sizing: border-box;
     padding: 0 5px;
 }
+#toolbox > .divider {
+    display: block;
+    height: 100%;
+    width: 1px;
+    background-color: rgba(0, 0, 0, 0.7);
+}
 #toolbox > * {
     margin-right: 10px;
+}
+#toolbox > *:first-child {
+    margin-left: 10px;
 }
 #toolbox > *:last-child {
     margin-right: 0px;
 }
-#game-actions {
+.action {
     display: flex;
     flex-direction: column;
 }
-#game-actions button {
+.action > * {
     margin-bottom: 5px;
     width: 120px;
 }
-#game-actions button:last-of-type {
+.action > p {
+    margin-top: 5px;
+    text-align: center;
+}
+.action > *:last-of-type {
     margin-bottom: 0;
 }
 
