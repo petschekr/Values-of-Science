@@ -105,6 +105,9 @@ section.region > .funds {
     box-sizing: border-box;
     padding: 0 5px;
 }
+#date {
+    width: 210px;
+}
 #toolbox > .divider {
     display: block;
     height: 100%;
