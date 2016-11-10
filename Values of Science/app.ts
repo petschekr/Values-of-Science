@@ -4,10 +4,18 @@ declare var L: any;
 declare var $: any;
 // Moment.js
 declare var moment: any;
+// Alertify
+declare var alertify: any;
 
 interface GeoPos {
     coordinates: number[];
     zoom: number;
+}
+interface Dialog {
+    trigger: string;
+    title?: string;
+    text: string;
+    timing?: number;
 }
 
 let londonStart: GeoPos = {
@@ -238,7 +246,59 @@ enum GameState {
     Running, Paused
 }
 let gameState: GameState = GameState.Paused;
+let dialogs: Dialog[];
+let dialogContent = document.createElement("div");
+dialogContent.style.maxHeight = "400px";
+dialogContent.style.margin = "-16px -16px -16px 0";
+dialogContent.style.overflow = "auto";
+dialogContent.style.paddingTop = "16px";
+dialogContent.style.paddingBottom = "16px";
+
 window.onload = () => {
+    $.getJSON("data/dialogs.json", function (json) {
+        dialogs = json.dialogs;
+
+        // Intro full screen dialogs before the game begins
+        let introDialogs = dialogs.filter(function (dialog) {
+            return dialog.trigger === "intro";
+        });
+        const transitionDelay = 500; // milliseconds as defined in the CSS
+        const inBetweenDelayMult = 3;
+        // Queue up the transitions
+        let currentDelay: number = 0;
+        let coverText = document.getElementById("cover-text");
+        let cover = document.getElementById("cover");
+        for (let dialog of introDialogs) {
+            setTimeout(function () {
+                coverText.style.opacity = "0";
+                setTimeout(function () {
+                    coverText.textContent = dialog.text;
+                    coverText.style.opacity = "1";
+                    if (dialog.text === introDialogs[introDialogs.length - 1].text) {
+                        // Last element
+                        setTimeout(function () {
+                            cover.style.opacity = "0";
+                            setTimeout(function () {
+                                cover.style.display = "none";
+                            }, 1000);
+                        }, dialog.timing);
+                    }
+                }, transitionDelay * inBetweenDelayMult);
+            }, currentDelay);
+            currentDelay += (1 + inBetweenDelayMult) * transitionDelay + dialog.timing;
+        }
+        // Gameplay dialogs
+        dialogs.filter(function (dialog) {
+            return dialog.trigger === "start";
+        }).forEach(function (dialog) {
+            dialogContent.innerText = dialog.text;
+            alertify.alert(dialog.title, dialogContent).set({ transition: "fade" });
+        });
+    });
+    document.querySelector("#cover > button").addEventListener("click", function () {
+        document.getElementById("cover").style.display = "none";
+    });
+
     londonInit();
     cascadiaInit();
     let dateElement = document.getElementById("date");
