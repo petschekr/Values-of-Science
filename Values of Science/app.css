@@ -37,6 +37,20 @@ body {
     transition: opacity 0.5s;
 }
 
+.ajs-content {
+    padding: 0 !important;
+}
+.ajs-content > .dialog-content {
+    max-height: 54vh;
+    margin-right: -24px;
+    overflow: auto;
+    padding: 16px 16px 16px 0;
+}
+.ajs-content > .dialog-content p {
+    text-align: justify;
+    margin-bottom: 15px !important;
+}
+
 section.region {
     height: 100%;
     width: 50%;

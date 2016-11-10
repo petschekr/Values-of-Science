@@ -248,11 +248,7 @@ enum GameState {
 let gameState: GameState = GameState.Paused;
 let dialogs: Dialog[];
 let dialogContent = document.createElement("div");
-dialogContent.style.maxHeight = "400px";
-dialogContent.style.margin = "-16px -16px -16px 0";
-dialogContent.style.overflow = "auto";
-dialogContent.style.paddingTop = "16px";
-dialogContent.style.paddingBottom = "16px";
+dialogContent.classList.add("dialog-content");
 
 window.onload = () => {
     $.getJSON("data/dialogs.json", function (json) {
@@ -291,7 +287,11 @@ window.onload = () => {
         dialogs.filter(function (dialog) {
             return dialog.trigger === "start";
         }).forEach(function (dialog) {
-            dialogContent.innerText = dialog.text;
+            for (let paragraph of dialog.text.split("\n")) {
+                let paragraphElement = document.createElement("p");
+                paragraphElement.textContent = paragraph;
+                dialogContent.appendChild(paragraphElement);
+            }
             alertify.alert(dialog.title, dialogContent).set({ transition: "fade" });
         });
     });
