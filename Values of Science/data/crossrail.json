@@ -4,6 +4,32 @@
     {
       "type": "Feature",
       "properties": {
+        "name": "Heathrow Central"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.454,
+          51.471
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Heathrow Terminal 4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.445,
+          51.458
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "Taplow"
       },
       "geometry": {
@@ -14,7 +40,7 @@
         ]
       }
     },
-	{
+	  {
       "type": "Feature",
       "properties": {
         "name": "Burnham"
