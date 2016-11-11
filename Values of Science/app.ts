@@ -239,6 +239,13 @@ function cascadiaInit() {
     function selected(e) {
         var layer = e.target;
         info.update(layer.feature.properties, true);
+        displayActions([{
+            buttonText: "Button text",
+            statusText: "Status text",
+            callback: function (e) {
+                console.log("Button clicked");
+            }
+        }]);
     }
     function onEachFeature(feature, layer) {
         layer.on({
@@ -283,6 +290,38 @@ function cascadiaInit() {
             }
         }).addTo(cascadiaMap);
     });
+}
+
+interface Action {
+    statusText: string;
+    buttonText: string;
+    callback: (event: MouseEvent) => void;
+}
+function displayActions(actions: Action[]): void {
+    let toolbox = document.getElementById("toolbox");
+    // Remove previous actions and dividers
+    let previousActions = document.querySelectorAll("#toolbox > .action, .divider");
+    for (let i = 0; i < previousActions.length; i++) {
+        toolbox.removeChild(previousActions[i]);
+    }
+    // Insert new actions and dividers
+    let divider = document.createElement("span");
+    divider.classList.add("divider");
+    for (let action of actions) {
+        let actionDiv = document.createElement("div");
+        actionDiv.classList.add("action");
+        let button = document.createElement("button");
+        button.classList.add("flat-button");
+        button.textContent = action.buttonText;
+        button.addEventListener("click", action.callback);
+        let text = document.createElement("p");
+        text.textContent = action.statusText;
+        actionDiv.appendChild(button);
+        actionDiv.appendChild(text);
+
+        toolbox.appendChild(divider);
+        toolbox.appendChild(actionDiv);
+    }
 }
 
 let dialogs: Dialog[];
