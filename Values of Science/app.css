@@ -108,6 +108,15 @@ section.region > .funds {
 #date {
     width: 210px;
 }
+#selection {
+    margin: 0 -15px 0 -15px !important;
+    transform: rotate(-90deg);
+    width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    white-space: nowrap;
+}
 #toolbox > .divider {
     display: block;
     height: 100%;

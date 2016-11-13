@@ -237,8 +237,9 @@ function cascadiaInit() {
         info.update();
     }
     function selected(e) {
-        var layer = e.target;
+        let layer = e.target;
         info.update(layer.feature.properties, true);
+        document.getElementById("selection").textContent = layer.feature.properties.name || "N/A";
         displayActions([{
             buttonText: "Button text",
             statusText: "Status text",
@@ -297,16 +298,21 @@ interface Action {
     buttonText: string;
     callback: (event: MouseEvent) => void;
 }
-function displayActions(actions: Action[]): void {
+function removeActions(): void {
     let toolbox = document.getElementById("toolbox");
-    // Remove previous actions and dividers
-    let previousActions = document.querySelectorAll("#toolbox > .action, .divider");
+    let previousActions = document.querySelectorAll("#toolbox > .action, .divider.auto");
     for (let i = 0; i < previousActions.length; i++) {
         toolbox.removeChild(previousActions[i]);
     }
+}
+function displayActions(actions: Action[]): void {
+    let toolbox = document.getElementById("toolbox");
+    // Remove previous actions and dividers
+    removeActions();
     // Insert new actions and dividers
     let divider = document.createElement("span");
     divider.classList.add("divider");
+    divider.classList.add("auto");
     for (let action of actions) {
         let actionDiv = document.createElement("div");
         actionDiv.classList.add("action");
