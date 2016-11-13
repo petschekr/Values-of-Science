@@ -2,22 +2,22 @@
   "dialogs": [
     {
       "trigger": "intro",
-      "text": "Why do we pursue the cutting-edge, the undiscovered, and the entirely unknown?",
+      "text": "Why are we in constant pursuit of the cutting-edge, the undiscovered, and the entirely unknown?",
       "timing": 5000
     },
     {
       "trigger": "intro",
-      "text": "Science and engineering present us with an optimistic vision for our future. The plans for our cities and infrastructure are grand, ambitious, and never at rest.",
+      "text": "Perhaps it’s because science and engineering present us with an optimistic vision for our future. The plans for our cities and infrastructure are grand, ambitious, and never at rest.",
       "timing": 8000
     },
     {
       "trigger": "intro",
-      "text": "Yet, wherever one finds science, real fiscal, political, and geographic practical limitations are present too.",
+      "text": "Yet, wherever we try to apply science practically, real fiscal, political, and geographical limitations are present too.",
       "timing": 6000
     },
     {
       "trigger": "intro",
-      "text": "Both textual components of this project deal with the complexities of the science that lies beneath the surface, the manner in which science can show us the way forward, and the limitations of what it is actually capable in practice.",
+      "text": "Both textual components of this project deal with the complexities of the science that promises us a better future, the manner in which it can solve our greatest challenges, and the limitations of what it is actually capable in practice.",
       "timing": 9000
     },
     {
