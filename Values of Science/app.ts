@@ -69,9 +69,18 @@ let cascadiaStart: GeoPos = {
 
 let londonMap, cascadiaMap;
 
+// Moved outside so that other scopes can deselect cities/stations
+let currentlySelectedStationIndex: number = null;
+let currentlySelectedCityIndex: number = null;
+let londonInfo, cascadiaInfo;
+
 function londonInit() {
     // London initialization
+    let stations: Station[] = [];
+    let boroughs: Borough[] = [];
+
     londonMap = L.map("london-map").setView(londonStart.coordinates, londonStart.zoom);
+    londonMap.addEventListener("click", mapDeselect);
     L.tileLayer('https://api.mapbox.com/styles/v1/petschekr/civ4sq5nv000l2js73mhhhhhv/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoicGV0c2NoZWtyIiwiYSI6ImNpdjRseXM3NTAwcmwydG4wZnd5cDMxMjQifQ.18bn19zBdqHqSArGaNrMwA', {
         attribution: `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>`,
         maxZoom: 16,
@@ -80,13 +89,16 @@ function londonInit() {
     londonMap.attributionControl.setPosition("topright");
 
     // Control that shows info on hover
-    var info = L.control();
-    info.onAdd = function (map) {
+    londonInfo = L.control();
+    londonInfo.onAdd = function (map) {
         this._div = L.DomUtil.create("div", "info");
         this.update();
         return this._div;
     };
-    info.update = function (props: Station = null, selected = false) {
+    londonInfo.update = function (props: Station = null, clicked = false) {
+        if (!clicked && currentlySelectedStationIndex) {
+            return;
+        }
         if (!props) {
             this._div.innerHTML =
             `
@@ -94,7 +106,7 @@ function londonInit() {
             <em>Hover over a proposed stop for more info</em>
             `;
         }
-        else if (!selected) {
+        else if (!clicked) {
             this._div.innerHTML =
             `
             <h4>London Crossrail</h4>
@@ -111,18 +123,34 @@ function londonInit() {
             `;
         }
     };
-    info.addTo(londonMap);
+    londonInfo.addTo(londonMap);
 
     function showDetails(e) {
         var layer = e.target;
-        info.update(layer.feature.properties);
+        londonInfo.update(layer.feature.properties);
     }
     function hideDetails(e) {
-        info.update();
+        londonInfo.update();
     }
     function selected(e) {
         var layer = e.target;
-        info.update(layer.feature.properties, true);
+        londonInfo.update(layer.feature.properties, true);
+        currentlySelectedCityIndex = null;
+        cascadiaInfo.update();
+        currentlySelectedStationIndex = stations.indexOf(layer.feature.properties);
+        displayActions(layer.feature.properties.name || "N/A", [{
+            buttonText: "Button text",
+            statusText: "Status text",
+            callback: function (e) {
+                console.log("Button clicked");
+            }
+        }]);
+    }
+    function mapDeselect(e) {
+        // Only fired when clicking on a part of the map that isn't marked
+        removeActions();
+        currentlySelectedStationIndex = null;
+        londonInfo.update();
     }
     function onEachFeature(feature, layer) {
         layer.on({
@@ -153,6 +181,7 @@ function londonInit() {
 		};
     }
     function onEachBorough(feature, layer) {
+        layer.addEventListener("click", mapDeselect);
         layer.bindPopup(`
             <b>${feature.properties.name}</b>
             <br />
@@ -173,17 +202,22 @@ function londonInit() {
             },
             onEachFeature: onEachFeature
         }).addTo(londonMap);
+        stations.concat(json.features.map(function (feature) {
+            return feature.properties;
+        }));
     });
     $.getJSON("data/london-boroughs.json", function (json) {
         L.geoJSON(json, {
             style: style,
             onEachFeature: onEachBorough
         }).addTo(londonMap);
+        boroughs.concat(json.features.map(function (feature) {
+            return feature.properties;
+        }));
     });
 }
 function cascadiaInit() {
     // Cascadia initialization
-    let currentlySelectedCityIndex: number = null;
     let cities: City[] = [];
     let earthquakes: Earthquake[] = [];
 
@@ -197,13 +231,13 @@ function cascadiaInit() {
     cascadiaMap.attributionControl.setPosition("topright");
 
     // Control that shows info on hover
-    var info = L.control();
-    info.onAdd = function (map) {
+    cascadiaInfo = L.control();
+    cascadiaInfo.onAdd = function (map) {
         this._div = L.DomUtil.create("div", "info");
         this.update();
         return this._div;
     };
-    info.update = function (props: City = null, clicked = false) {
+    cascadiaInfo.update = function (props: City = null, clicked = false) {
         if (!clicked && currentlySelectedCityIndex) {
             return;
         }
@@ -229,18 +263,20 @@ function cascadiaInit() {
             Population: ${props.population2015.toLocaleString()} (2015 est.)`;
         }
     };
-    info.addTo(cascadiaMap);
+    cascadiaInfo.addTo(cascadiaMap);
 
     function showDetails(e) {
         var layer = e.target;
-        info.update(layer.feature.properties);
+        cascadiaInfo.update(layer.feature.properties);
     }
     function hideDetails(e) {
-        info.update();
+        cascadiaInfo.update();
     }
     function selected(e) {
         let layer = e.target;
-        info.update(layer.feature.properties, true);
+        cascadiaInfo.update(layer.feature.properties, true);
+        currentlySelectedStationIndex = null;
+        londonInfo.update();
         currentlySelectedCityIndex = cities.indexOf(layer.feature.properties);
         displayActions(layer.feature.properties.name || "N/A", [{
             buttonText: "Button text",
@@ -254,9 +290,9 @@ function cascadiaInit() {
         // Only fired when clicking on a part of the map that isn't marked
         removeActions();
         currentlySelectedCityIndex = null;
-        info.update();
+        cascadiaInfo.update();
     }
-    function onEachCity(feature, layer) {
+    function onEachFeature(feature, layer) {
         layer.on({
             mouseover: showDetails,
             mouseout: hideDetails,
@@ -281,7 +317,7 @@ function cascadiaInit() {
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, { icon: marker });
             },
-            onEachFeature: onEachCity
+            onEachFeature: onEachFeature
         }).addTo(cascadiaMap);
         cities.concat(json.features.map(function (feature) {
             return feature.properties;
@@ -292,7 +328,7 @@ function cascadiaInit() {
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, { icon: marker });
             },
-            onEachFeature: onEachCity
+            onEachFeature: onEachFeature
         }).addTo(cascadiaMap);
         cities.concat(json.features.map(function (feature) {
             return feature.properties;
