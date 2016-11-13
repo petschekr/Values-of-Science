@@ -187,3 +187,7 @@ section.region > .funds {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+.flat-button[disabled] {
+    opacity: 0.5;
+    cursor: default;
+}

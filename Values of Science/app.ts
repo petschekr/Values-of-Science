@@ -17,10 +17,72 @@ interface Dialog {
     text: string;
     timing?: number;
 }
-interface City {
+interface CityObject {
     name: string;
     population2010: number;
     population2015: number;
+    // User actions
+    magnitudeProtection: number;
+}
+class City implements CityObject {
+    public name: string;
+    public population2010: number;    
+    public population2015: number;
+    public magnitudeProtection: number;
+
+    public magnitudeUpgradeProgress = 0;
+    public magnitudeUpgradeTicks = 200; // Slightly over half a year
+    public magnitudeUpgradeAmount = 1.5;
+    public earlyWarningProgress = 0;
+    public earlyWarningTicks = 365 * 2; // 2 years
+
+    get magnitudeUpgradeCost(): number {
+        return this.magnitudeUpgradeCost = this.population2015 / 4 * 10000 * (5 / this.magnitudeProtection); // Home-brewed formula that pretends that every 4 people lives in a decent sized house together
+    }
+    get earlyWarningCost(): number {
+        return this.population2015 * 1.3899; // http://pubs.usgs.gov/of/2014/1097/pdf/ofr2014-1097.pdf
+    }
+
+    constructor(cityProps: City) {
+        this.name = cityProps.name;
+        this.population2010 = cityProps.population2010;
+        this.population2015 = cityProps.population2015;
+
+        this.magnitudeProtection = 5; // https://earthquake.usgs.gov/learn/topics/mag_vs_int.php
+    }
+    upgradeMagnitudeProtection(): void {
+        if (this.magnitudeUpgradeProgress > 0) {
+            alertify.error(`${this.name} is being upgraded`);
+            return;
+        }
+        alertify.confirm(
+            "Are you sure?",
+            `<b>${this.name}</b> will have its buildings upgraded to magnitude <b>${(this.magnitudeProtection + this.magnitudeUpgradeAmount).toFixed(1)}</b> at a cost of <b>$${this.magnitudeUpgradeCost.toLocaleString()}</b>. This will take <b>${this.magnitudeUpgradeTicks}</b> days to complete.`,
+            (function () {
+                alertify.success(`Upgrading ${this.name}`);
+                cascadiaFunds -= this.magnitudeUpgradeCost;
+                this.magnitudeUpgradeProgress += 1;
+
+                removeActions();
+                currentlySelectedCityIndex = null;
+                cascadiaInfo.update();
+            }).bind(this),
+            function () { }
+        );
+    }
+    installEarlyWarning(): void {
+
+    }
+    update(): void {
+        if (this.magnitudeUpgradeProgress > 0) {
+            this.magnitudeUpgradeProgress++;
+            if (this.magnitudeUpgradeProgress >= this.magnitudeUpgradeTicks) {
+                this.magnitudeUpgradeProgress = 0;
+                this.magnitudeProtection += this.magnitudeUpgradeAmount;
+                alertify.success(`Finished upgrading ${this.name}`);
+            }
+        }
+    }
 }
 interface Earthquake {
     mag: number; // 4.8,
@@ -56,6 +118,12 @@ interface Borough {
 }
 interface Station {
     name: string;
+    // User actions
+    hasTBM?: boolean;
+    isBuilt?: boolean;
+    hasSubsidenceMonitoring?: boolean;
+    demand?: number;
+    capacity?: number;
 }
 
 let londonStart: GeoPos = {
@@ -74,10 +142,10 @@ let currentlySelectedStationIndex: number = null;
 let currentlySelectedCityIndex: number = null;
 let londonInfo, cascadiaInfo;
 
+let stations: Station[] = [];
+let boroughs: Borough[] = [];
 function londonInit() {
     // London initialization
-    let stations: Station[] = [];
-    let boroughs: Borough[] = [];
 
     londonMap = L.map("london-map").setView(londonStart.coordinates, londonStart.zoom);
     londonMap.addEventListener("click", mapDeselect);
@@ -140,6 +208,7 @@ function londonInit() {
         currentlySelectedStationIndex = stations.indexOf(layer.feature.properties);
         displayActions(layer.feature.properties.name || "N/A", [{
             buttonText: "Button text",
+            buttonEnabled: true,
             statusText: "Status text",
             callback: function (e) {
                 console.log("Button clicked");
@@ -202,7 +271,7 @@ function londonInit() {
             },
             onEachFeature: onEachFeature
         }).addTo(londonMap);
-        stations.concat(json.features.map(function (feature) {
+        stations = stations.concat(json.features.map(function (feature) {
             return feature.properties;
         }));
     });
@@ -211,15 +280,15 @@ function londonInit() {
             style: style,
             onEachFeature: onEachBorough
         }).addTo(londonMap);
-        boroughs.concat(json.features.map(function (feature) {
+        boroughs = boroughs.concat(json.features.map(function (feature) {
             return feature.properties;
         }));
     });
 }
+let cities: City[] = [];
+let earthquakes: Earthquake[] = [];
 function cascadiaInit() {
     // Cascadia initialization
-    let cities: City[] = [];
-    let earthquakes: Earthquake[] = [];
 
     cascadiaMap = L.map("cascadia-map").setView(cascadiaStart.coordinates, cascadiaStart.zoom);
     cascadiaMap.addEventListener("click", mapDeselect);
@@ -274,17 +343,37 @@ function cascadiaInit() {
     }
     function selected(e) {
         let layer = e.target;
-        cascadiaInfo.update(layer.feature.properties, true);
+        let city: CityObject = layer.feature.properties;
+        cascadiaInfo.update(city, true);
         currentlySelectedStationIndex = null;
         londonInfo.update();
-        currentlySelectedCityIndex = cities.indexOf(layer.feature.properties);
-        displayActions(layer.feature.properties.name || "N/A", [{
-            buttonText: "Button text",
-            statusText: "Status text",
-            callback: function (e) {
-                console.log("Button clicked");
+        for (let i = 0; i < cities.length; i++) {
+            if (cities[i].name === city.name) {
+                currentlySelectedCityIndex = i;
+                break;
             }
-        }]);
+        }
+        let currentCity: City = cities[currentlySelectedCityIndex];
+
+        displayActions(layer.feature.properties.name || "N/A", [
+            {
+                buttonText: `Protect structures to ${(currentCity.magnitudeUpgradeAmount + currentCity.magnitudeProtection).toFixed(1)}`,
+                buttonEnabled: currentCity.magnitudeUpgradeProgress === 0,
+                statusText: currentCity.magnitudeUpgradeProgress === 0 ? `Current protection: ${currentCity.magnitudeProtection.toFixed(1)}` : `Upgrade ${(currentCity.magnitudeUpgradeProgress / currentCity.magnitudeUpgradeTicks * 100).toFixed(0)}% complete`,
+                callback: function (e) {
+                    currentCity.upgradeMagnitudeProtection();
+                    // `this` refers to p element
+                }
+            },
+            {
+                buttonText: "Install early warning",
+                buttonEnabled: true,
+                statusText: "Not installed",
+                callback: function (e) {
+                    console.log("Button clicked");
+                }
+            }
+        ]);
     }
     function mapDeselect(e) {
         // Only fired when clicking on a part of the map that isn't marked
@@ -319,8 +408,8 @@ function cascadiaInit() {
             },
             onEachFeature: onEachFeature
         }).addTo(cascadiaMap);
-        cities.concat(json.features.map(function (feature) {
-            return feature.properties;
+        cities = cities.concat(json.features.map(function (feature) {
+            return new City(feature.properties);
         }));
     });
     $.getJSON("data/oregon.json", function (json) {
@@ -330,17 +419,17 @@ function cascadiaInit() {
             },
             onEachFeature: onEachFeature
         }).addTo(cascadiaMap);
-        cities.concat(json.features.map(function (feature) {
-            return feature.properties;
+        cities = cities.concat(json.features.map(function (feature) {
+            return new City(feature.properties);
         }));
     });
     $.getJSON("data/earthquakes.json", function (json) {
-        L.geoJSON(json, {
+        /*L.geoJSON(json, {
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, { icon: earthquakeMarker });
             }
-        }).addTo(cascadiaMap);
-        earthquakes.concat(json.features.map(function (feature) {
+        }).addTo(cascadiaMap);*/
+        earthquakes = earthquakes.concat(json.features.map(function (feature) {
             return feature.properties;
         }));
     });
@@ -349,6 +438,7 @@ function cascadiaInit() {
 interface Action {
     statusText: string;
     buttonText: string;
+    buttonEnabled: boolean;
     callback: (event: MouseEvent) => void;
 }
 function removeActions(): void {
@@ -374,13 +464,14 @@ function displayActions(selection: string, actions: Action[]): void {
         let button = document.createElement("button");
         button.classList.add("flat-button");
         button.textContent = action.buttonText;
-        button.addEventListener("click", action.callback);
+        button.disabled = !action.buttonEnabled;
         let text = document.createElement("p");
         text.textContent = action.statusText;
         actionDiv.appendChild(button);
         actionDiv.appendChild(text);
+        button.addEventListener("click", action.callback.bind(text));
 
-        toolbox.appendChild(divider);
+        toolbox.appendChild(divider.cloneNode(false));
         toolbox.appendChild(actionDiv);
     }
 }
@@ -446,7 +537,7 @@ enum GameState {
     Running, Paused
 }
 let gameState: GameState = GameState.Paused;
-let cascadiaFunds: number = 10000;
+let cascadiaFunds: number = 10000000000;
 let londonFunds: number = 15900000000;
 
 window.onload = () => {
@@ -469,6 +560,9 @@ window.onload = () => {
             if (Date.now() - lastDateUpdate > 500) {
                 internalDate = internalDate.add(1, "days");
                 lastDateUpdate = Date.now();
+                for (let city of cities) {
+                    city.update();
+                }
             }
         }
         window.requestAnimationFrame(updateLoop);
