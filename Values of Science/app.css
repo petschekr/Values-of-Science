@@ -135,10 +135,10 @@ section.region > .funds {
 .action {
     display: flex;
     flex-direction: column;
+    width: 200px;
 }
 .action > * {
     margin-bottom: 5px;
-    width: 120px;
 }
 .action > p {
     margin-top: 5px;
