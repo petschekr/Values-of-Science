@@ -183,7 +183,12 @@ function londonInit() {
 }
 function cascadiaInit() {
     // Cascadia initialization
+    let currentlySelectedCityIndex: number = null;
+    let cities: City[] = [];
+    let earthquakes: Earthquake[] = [];
+
     cascadiaMap = L.map("cascadia-map").setView(cascadiaStart.coordinates, cascadiaStart.zoom);
+    cascadiaMap.addEventListener("click", mapDeselect);
     L.tileLayer('https://api.mapbox.com/styles/v1/petschekr/civ4sq5nv000l2js73mhhhhhv/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoicGV0c2NoZWtyIiwiYSI6ImNpdjRseXM3NTAwcmwydG4wZnd5cDMxMjQifQ.18bn19zBdqHqSArGaNrMwA', {
         attribution: `Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>`,
         maxZoom: 14,
@@ -198,33 +203,30 @@ function cascadiaInit() {
         this.update();
         return this._div;
     };
-    info.update = function (props: City = null, selected = false) {
-        if (!props) {
-            this._div.innerHTML =
-            `
-            <h4>FEMA Cascadia Rising</h4>
-            <em>Hover over a city for more info</em>
-            `;
+    info.update = function (props: City = null, clicked = false) {
+        if (!clicked && currentlySelectedCityIndex) {
+            return;
         }
-        else if (!selected) {
-            this._div.innerHTML =
-                `
+        if (!props) {
+            this._div.innerHTML = `
+            <h4>FEMA Cascadia Rising</h4>
+            <em>Hover over a city for more info</em>`;
+        }
+        else if (!clicked) {
+            this._div.innerHTML = `
             <h4>FEMA Cascadia Rising</h4>
             <b>${props.name}</b>
             <br />
             Population: ${props.population2015.toLocaleString()} (2015 est.)
             <br />
-            <em>Click to view actions</em>
-            `;
+            <em>Click to view actions</em>`;
         }
         else {
-            this._div.innerHTML =
-            `
+            this._div.innerHTML = `
             <h4>FEMA Cascadia Rising</h4>
             <b>${props.name}</b>
             <br />
-            Population: ${props.population2015.toLocaleString()} (2015 est.)
-            `;
+            Population: ${props.population2015.toLocaleString()} (2015 est.)`;
         }
     };
     info.addTo(cascadiaMap);
@@ -239,8 +241,8 @@ function cascadiaInit() {
     function selected(e) {
         let layer = e.target;
         info.update(layer.feature.properties, true);
-        document.getElementById("selection").textContent = layer.feature.properties.name || "N/A";
-        displayActions([{
+        currentlySelectedCityIndex = cities.indexOf(layer.feature.properties);
+        displayActions(layer.feature.properties.name || "N/A", [{
             buttonText: "Button text",
             statusText: "Status text",
             callback: function (e) {
@@ -248,7 +250,13 @@ function cascadiaInit() {
             }
         }]);
     }
-    function onEachFeature(feature, layer) {
+    function mapDeselect(e) {
+        // Only fired when clicking on a part of the map that isn't marked
+        removeActions();
+        currentlySelectedCityIndex = null;
+        info.update();
+    }
+    function onEachCity(feature, layer) {
         layer.on({
             mouseover: showDetails,
             mouseout: hideDetails,
@@ -273,16 +281,22 @@ function cascadiaInit() {
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, { icon: marker });
             },
-            onEachFeature: onEachFeature
+            onEachFeature: onEachCity
         }).addTo(cascadiaMap);
+        cities.concat(json.features.map(function (feature) {
+            return feature.properties;
+        }));
     });
     $.getJSON("data/oregon.json", function (json) {
         L.geoJSON(json, {
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, { icon: marker });
             },
-            onEachFeature: onEachFeature
+            onEachFeature: onEachCity
         }).addTo(cascadiaMap);
+        cities.concat(json.features.map(function (feature) {
+            return feature.properties;
+        }));
     });
     $.getJSON("data/earthquakes.json", function (json) {
         L.geoJSON(json, {
@@ -290,6 +304,9 @@ function cascadiaInit() {
                 return L.marker(latlng, { icon: earthquakeMarker });
             }
         }).addTo(cascadiaMap);
+        earthquakes.concat(json.features.map(function (feature) {
+            return feature.properties;
+        }));
     });
 }
 
@@ -299,17 +316,19 @@ interface Action {
     callback: (event: MouseEvent) => void;
 }
 function removeActions(): void {
+    document.getElementById("selection").textContent = "N/A";
     let toolbox = document.getElementById("toolbox");
     let previousActions = document.querySelectorAll("#toolbox > .action, .divider.auto");
     for (let i = 0; i < previousActions.length; i++) {
         toolbox.removeChild(previousActions[i]);
     }
 }
-function displayActions(actions: Action[]): void {
+function displayActions(selection: string, actions: Action[]): void {
     let toolbox = document.getElementById("toolbox");
     // Remove previous actions and dividers
     removeActions();
     // Insert new actions and dividers
+    document.getElementById("selection").textContent = selection;
     let divider = document.createElement("span");
     divider.classList.add("divider");
     divider.classList.add("auto");

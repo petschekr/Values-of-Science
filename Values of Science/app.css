@@ -109,7 +109,7 @@ section.region > .funds {
     width: 210px;
 }
 #selection {
-    margin: 0 -15px 0 -15px !important;
+    margin: 0 -15px 0 -20px !important;
     transform: rotate(-90deg);
     width: 80px;
     overflow: hidden;
