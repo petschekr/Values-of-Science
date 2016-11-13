@@ -31,7 +31,7 @@ class City implements CityObject {
     public magnitudeProtection: number;
 
     public magnitudeUpgradeProgress = 0;
-    public magnitudeUpgradeTicks = 200; // Slightly over half a year
+    public magnitudeUpgradeTicks = 300;
     public magnitudeUpgradeAmount = 1.5;
     public earlyWarningProgress = 0;
     public earlyWarningTicks = 365 * 2; // 2 years
@@ -57,8 +57,12 @@ class City implements CityObject {
         }
         alertify.confirm(
             "Are you sure?",
-            `<b>${this.name}</b> will have its buildings upgraded to magnitude <b>${(this.magnitudeProtection + this.magnitudeUpgradeAmount).toFixed(1)}</b> at a cost of <b>$${this.magnitudeUpgradeCost.toLocaleString()}</b>. This will take <b>${this.magnitudeUpgradeTicks}</b> days to complete.`,
+            `<b>${this.name}</b> will have its buildings upgraded to magnitude <b>${(this.magnitudeProtection + this.magnitudeUpgradeAmount).toFixed(1)}</b> at a cost of <b>$${this.magnitudeUpgradeCost.toLocaleString()}</b>. This will take <b>${this.magnitudeUpgradeTicks.toLocaleString()}</b> days to complete.`,
             (function () {
+                if (cascadiaFunds - this.magnitudeUpgradeCost < 0) {
+                    alertify.error("Insufficient funds");
+                    return;
+                }
                 alertify.success(`Upgrading ${this.name}`);
                 cascadiaFunds -= this.magnitudeUpgradeCost;
                 this.magnitudeUpgradeProgress += 1;
@@ -355,14 +359,15 @@ function cascadiaInit() {
         }
         let currentCity: City = cities[currentlySelectedCityIndex];
 
-        displayActions(layer.feature.properties.name || "N/A", [
+        displayActions(city.name || "N/A", [
             {
                 buttonText: `Protect structures to ${(currentCity.magnitudeUpgradeAmount + currentCity.magnitudeProtection).toFixed(1)}`,
                 buttonEnabled: currentCity.magnitudeUpgradeProgress === 0,
                 statusText: currentCity.magnitudeUpgradeProgress === 0 ? `Current protection: ${currentCity.magnitudeProtection.toFixed(1)}` : `Upgrade ${(currentCity.magnitudeUpgradeProgress / currentCity.magnitudeUpgradeTicks * 100).toFixed(0)}% complete`,
                 callback: function (e) {
+                    let button: HTMLButtonElement = e.target as HTMLButtonElement;
+                    let p: HTMLParagraphElement = this;
                     currentCity.upgradeMagnitudeProtection();
-                    // `this` refers to p element
                 }
             },
             {
@@ -537,7 +542,7 @@ enum GameState {
     Running, Paused
 }
 let gameState: GameState = GameState.Paused;
-let cascadiaFunds: number = 10000000000;
+let cascadiaFunds: number = 5000000000;
 let londonFunds: number = 15900000000;
 
 window.onload = () => {
