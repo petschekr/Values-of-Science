@@ -21,6 +21,8 @@ interface CityObject {
     name: string;
     population2010: number;
     population2015: number;
+    lat: number;
+    long: number;
     // User actions
     magnitudeProtection: number;
 }
@@ -28,7 +30,10 @@ class City implements CityObject {
     public name: string;
     public population2010: number;    
     public population2015: number;
+    public lat: number;
+    public long: number;
     public magnitudeProtection: number;
+    public earlyWarningInstalled: boolean;
 
     public magnitudeUpgradeProgress = 0;
     public magnitudeUpgradeTicks = 300;
@@ -37,7 +42,7 @@ class City implements CityObject {
     public earlyWarningTicks = 365 * 2; // 2 years
 
     get magnitudeUpgradeCost(): number {
-        return this.magnitudeUpgradeCost = this.population2015 / 4 * 10000 * (5 / this.magnitudeProtection); // Home-brewed formula that pretends that every 4 people lives in a decent sized house together
+        return this.population2015 / 4 * 10000 * (5 / this.magnitudeProtection); // Home-brewed formula that pretends that every 4 people lives in a decent sized house together
     }
     get earlyWarningCost(): number {
         return this.population2015 * 1.3899; // http://pubs.usgs.gov/of/2014/1097/pdf/ofr2014-1097.pdf
@@ -47,8 +52,11 @@ class City implements CityObject {
         this.name = cityProps.name;
         this.population2010 = cityProps.population2010;
         this.population2015 = cityProps.population2015;
+        this.lat = cityProps.lat;
+        this.long = cityProps.long;
 
         this.magnitudeProtection = 5; // https://earthquake.usgs.gov/learn/topics/mag_vs_int.php
+        this.earlyWarningInstalled = false;
     }
     upgradeMagnitudeProtection(): void {
         if (this.magnitudeUpgradeProgress > 0) {
@@ -115,6 +123,8 @@ interface Earthquake {
     magType: string; // "mb",
     type: string; // "earthquake",
     title: string; // "M 4.8 - Off the coast of Oregon"
+    lat: number;
+    long: number;
 }
 interface Borough {
     population: number;
@@ -400,12 +410,6 @@ function cascadiaInit() {
         iconAnchor: [15, 36], // point of the icon which will correspond to marker's location
         popupAnchor: [15, 15] // point from which the popup should open relative to the iconAnchor
     });
-    let earthquakeMarker = L.icon({
-        iconUrl: "data/marker_red.png",
-        iconSize: [30, 70], // size of the icon
-        iconAnchor: [15, 36], // point of the icon which will correspond to marker's location
-        popupAnchor: [15, 15] // point from which the popup should open relative to the iconAnchor
-    });
     $.getJSON("data/washington.json", function (json) {
         L.geoJSON(json, {
             pointToLayer: function (feature, latlng) {
@@ -414,6 +418,8 @@ function cascadiaInit() {
             onEachFeature: onEachFeature
         }).addTo(cascadiaMap);
         cities = cities.concat(json.features.map(function (feature) {
+            feature.properties.lat = feature.geometry.coordinates[1];
+            feature.properties.long = feature.geometry.coordinates[0];
             return new City(feature.properties);
         }));
     });
@@ -425,19 +431,117 @@ function cascadiaInit() {
             onEachFeature: onEachFeature
         }).addTo(cascadiaMap);
         cities = cities.concat(json.features.map(function (feature) {
+            feature.properties.lat = feature.geometry.coordinates[1];
+            feature.properties.long = feature.geometry.coordinates[0];
             return new City(feature.properties);
         }));
     });
     $.getJSON("data/earthquakes.json", function (json) {
-        /*L.geoJSON(json, {
-            pointToLayer: function (feature, latlng) {
-                return L.marker(latlng, { icon: earthquakeMarker });
-            }
-        }).addTo(cascadiaMap);*/
         earthquakes = earthquakes.concat(json.features.map(function (feature) {
+            feature.properties.lat  = feature.geometry.coordinates[1];
+            feature.properties.long = feature.geometry.coordinates[0];
             return feature.properties;
         }));
     });
+}
+let earthquakeShakeNumber: number = 0;
+const earthquakeShakeDelta: number = 50;
+let lastShake: number = 0;
+function triggerEarthquake() {
+    gameState = GameState.Paused;
+    if (Date.now() - lastShake > earthquakeShakeDelta) {
+        cascadiaMap.panBy(L.point((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 20));
+        earthquakeShakeNumber++;
+        lastShake = Date.now();
+    }
+    if (earthquakeShakeNumber < 50) {
+        window.requestAnimationFrame(triggerEarthquake);
+    }
+    else {
+        // After shaking stops
+        const maxDeathRate = 13000 / 4629511;
+        const maxInjuryRate = 27000 / 4629511;
+        const maxDisplacementRate = 1000000 / 4629511;
+        earthquakes = earthquakes.sort(function () { return 0.5 - Math.random() });
+        let earthquake = earthquakes[0];
+        earthquake.mag = Math.random() * 3.5 + 6;
+        earthquake.mag = 6;
+        // Plot on map
+        let earthquakeMarker = L.icon({
+            iconUrl: "data/marker_red.png",
+            iconSize: [30, 70], // size of the icon
+            iconAnchor: [15, 36], // point of the icon which will correspond to marker's location
+            popupAnchor: [15, 15] // point from which the popup should open relative to the iconAnchor
+        });
+        let earthquakeCoords = [earthquake.lat, earthquake.long];
+        L.marker(earthquakeCoords, { icon: earthquakeMarker }).addTo(cascadiaMap);
+        cascadiaMap.flyTo(earthquakeCoords, 6);
+
+        let totalPopulation = 0; // 4629511
+        let deathToll = 0;
+        let displaced = 0;
+        let injured = 0;
+        for (let city of cities) {
+            let distance = cascadiaMap.distance(earthquakeCoords, [city.lat, city.long]); // in meters
+            totalPopulation += city.population2015;
+            // Only loosely based on reality I think
+            deathToll += maxDeathRate * (700000 / distance) * city.population2015 * Math.pow(10, earthquake.mag) / Math.pow(10, 6) * 2 / 1000;
+            injured += maxInjuryRate * (700000 / distance) * city.population2015 * Math.pow(10, earthquake.mag) / Math.pow(10, 6) * 2 / 1000;
+            displaced += maxDisplacementRate * (700000 / distance) * city.population2015 * Math.pow(10, earthquake.mag) / Math.pow(10, 6) * 2 / 1000;
+            // I may or may not have totally made up these constants
+            if (city.earlyWarningInstalled) {
+                deathToll *= 5 / 6;
+                displaced *= 1;
+                injured *= 1 / 3;
+            }
+            if (city.magnitudeProtection >= earthquake.mag) {
+                deathToll *= 1 / 4;
+                displaced *= 2 / 3
+                injured *= 1 / 3;
+            }
+        }
+        deathToll = Math.round(deathToll);
+        displaced = Math.round(displaced);
+        injured = Math.round(injured);
+        let pagerLevel: string;
+        let pagerLevelExplanation: string;
+        if (deathToll >= 1000) {
+            pagerLevel = "RED";
+            pagerLevelExplanation = "1,000+";
+        }
+        else if (deathToll >= 100) {
+            pagerLevel = "ORANGE";
+            pagerLevelExplanation = "100 – 999";
+        }
+        else if (deathToll >= 1) {
+            pagerLevel = "YELLOW";
+            pagerLevelExplanation = "1 – 99";
+        }
+        else {
+            pagerLevel = "GREEN";
+            pagerLevelExplanation = "0";
+        }
+
+        let dialogContent = document.createElement("div");
+        let dialog = dialogs.filter(function (dialog) {
+            return dialog.trigger === "earthquake";
+        })[0];
+        let paragraphElement = document.createElement("p");
+        paragraphElement.innerHTML = `
+            At ${moment().format("h:mm A")} local time on ${internalDate.format("MMMM Do, Y")}, a magnitude <b>${earthquake.mag.toFixed(1)}</b> earthquake struck the Cascadia region (population ${totalPopulation.toLocaleString()}) ${earthquake.place}. Preliminary USGS data estimates <b>${deathToll.toLocaleString()}</b> fatalities, <b>${injured.toLocaleString()}</b> injured, and <b>${displaced.toLocaleString()}</b> displaced, putting this at PAGER level ${pagerLevel} (${pagerLevelExplanation} fatalities). ${earthquake.long < -124.079512 ? "A tsunami warning is currently in effect for the Washington and Oregon coastal region. If you are currently in the affected area, please seek higher ground immediately." : ""}
+        `;
+        dialogContent.classList.add("dialog-content");
+        dialogContent.appendChild(paragraphElement);
+        for (let paragraph of dialog.text.split("\n")) {
+            paragraphElement = document.createElement("p");
+            paragraphElement.textContent = paragraph;
+            dialogContent.classList.add("dialog-content");
+            dialogContent.appendChild(paragraphElement);
+        }
+        alertify.alert(dialog.title, dialogContent, function () {
+            // Allow the user to show the results again?
+        }).set({ transition: "fade" });
+    }
 }
 
 interface Action {
@@ -482,9 +586,6 @@ function displayActions(selection: string, actions: Action[]): void {
 }
 
 let dialogs: Dialog[];
-let dialogContent = document.createElement("div");
-dialogContent.classList.add("dialog-content");
-
 function dialogInit() {
     $.getJSON("data/dialogs.json", function (json) {
         dialogs = json.dialogs;
@@ -519,12 +620,14 @@ function dialogInit() {
             currentDelay += (1 + inBetweenDelayMult) * transitionDelay + dialog.timing;
         }
         // Gameplay dialogs
+        let dialogContent = document.createElement("div");
         dialogs.filter(function (dialog) {
             return dialog.trigger === "start";
         }).forEach(function (dialog) {
             for (let paragraph of dialog.text.split("\n")) {
                 let paragraphElement = document.createElement("p");
                 paragraphElement.textContent = paragraph;
+                dialogContent.classList.add("dialog-content");
                 dialogContent.appendChild(paragraphElement);
             }
             alertify.alert(dialog.title, dialogContent, function () {
@@ -565,8 +668,14 @@ window.onload = () => {
             if (Date.now() - lastDateUpdate > 500) {
                 internalDate = internalDate.add(1, "days");
                 lastDateUpdate = Date.now();
+
+                // Update cities
                 for (let city of cities) {
                     city.update();
+                }
+                // Trigger earthquake in about 4 years (could be much sooner or much later)
+                if (Math.random() < 1 / 1460) {
+                    triggerEarthquake();
                 }
             }
         }
