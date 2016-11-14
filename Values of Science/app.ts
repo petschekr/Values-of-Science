@@ -45,7 +45,7 @@ class City implements CityObject {
         return Math.round(this.population2015 / 4 * 10000 * (5 / this.magnitudeProtection)); // Home-brewed formula that pretends that every 4 people lives in a decent sized house together
     }
     get earlyWarningCost(): number {
-        return Math.round(this.population2015 * 1.3899); // http://pubs.usgs.gov/of/2014/1097/pdf/ofr2014-1097.pdf
+        return Math.round(this.population2015 * 1.3899 * 1000); // http://pubs.usgs.gov/of/2014/1097/pdf/ofr2014-1097.pdf
     }
 
     constructor(cityProps: City) {
