@@ -39,13 +39,13 @@ class City implements CityObject {
     public magnitudeUpgradeTicks = 300;
     public magnitudeUpgradeAmount = 1.5;
     public earlyWarningProgress = 0;
-    public earlyWarningTicks = 365 * 2; // 2 years
+    public earlyWarningTicks = 0; // Set depending on population in constructor
 
     get magnitudeUpgradeCost(): number {
-        return this.population2015 / 4 * 10000 * (5 / this.magnitudeProtection); // Home-brewed formula that pretends that every 4 people lives in a decent sized house together
+        return Math.round(this.population2015 / 4 * 10000 * (5 / this.magnitudeProtection)); // Home-brewed formula that pretends that every 4 people lives in a decent sized house together
     }
     get earlyWarningCost(): number {
-        return this.population2015 * 1.3899; // http://pubs.usgs.gov/of/2014/1097/pdf/ofr2014-1097.pdf
+        return Math.round(this.population2015 * 1.3899); // http://pubs.usgs.gov/of/2014/1097/pdf/ofr2014-1097.pdf
     }
 
     constructor(cityProps: City) {
@@ -57,6 +57,7 @@ class City implements CityObject {
 
         this.magnitudeProtection = 5; // https://earthquake.usgs.gov/learn/topics/mag_vs_int.php
         this.earlyWarningInstalled = false;
+        this.earlyWarningTicks = Math.round(365 + 365 * this.population2015 / 334171); // Max 3 years for largest city (Seattle) with min of 1 year for 0 population
     }
     upgradeMagnitudeProtection(): void {
         if (this.magnitudeUpgradeProgress > 0) {
@@ -83,7 +84,28 @@ class City implements CityObject {
         );
     }
     installEarlyWarning(): void {
+        if (this.earlyWarningProgress > 0) {
+            alertify.error(`${this.name} is installing an EWS`);
+            return;
+        }
+        alertify.confirm(
+            "Are you sure?",
+            `An earthquake early warning system will be installed in <b>${this.name}</b> at a cost of <b>$${this.earlyWarningCost.toLocaleString()}</b>. This will take <b>${this.earlyWarningTicks.toLocaleString()}</b> days to complete.`,
+            (function () {
+                if (cascadiaFunds - this.earlyWarningCost < 0) {
+                    alertify.error("Insufficient funds");
+                    return;
+                }
+                alertify.success(`Installing EWS in ${this.name}`);
+                cascadiaFunds -= this.earlyWarningCost;
+                this.earlyWarningProgress += 1;
 
+                removeActions();
+                currentlySelectedCityIndex = null;
+                cascadiaInfo.update();
+            }).bind(this),
+            function () { }
+        );
     }
     update(): void {
         if (this.magnitudeUpgradeProgress > 0) {
@@ -92,6 +114,14 @@ class City implements CityObject {
                 this.magnitudeUpgradeProgress = 0;
                 this.magnitudeProtection += this.magnitudeUpgradeAmount;
                 alertify.success(`Finished upgrading ${this.name}`);
+            }
+        }
+        if (this.earlyWarningProgress > 0) {
+            this.earlyWarningProgress++;
+            if (this.earlyWarningProgress >= this.earlyWarningTicks) {
+                this.earlyWarningProgress = 0;
+                this.earlyWarningInstalled = true;
+                alertify.success(`Finished installing EWS in ${this.name}`);
             }
         }
     }
@@ -375,17 +405,15 @@ function cascadiaInit() {
                 buttonEnabled: currentCity.magnitudeUpgradeProgress === 0,
                 statusText: currentCity.magnitudeUpgradeProgress === 0 ? `Current protection: ${currentCity.magnitudeProtection.toFixed(1)}` : `Upgrade ${(currentCity.magnitudeUpgradeProgress / currentCity.magnitudeUpgradeTicks * 100).toFixed(0)}% complete`,
                 callback: function (e) {
-                    let button: HTMLButtonElement = e.target as HTMLButtonElement;
-                    let p: HTMLParagraphElement = this;
                     currentCity.upgradeMagnitudeProtection();
                 }
             },
             {
                 buttonText: "Install early warning",
-                buttonEnabled: true,
-                statusText: "Not installed",
+                buttonEnabled: currentCity.earlyWarningProgress === 0 && !currentCity.earlyWarningInstalled,
+                statusText: currentCity.earlyWarningProgress === 0 ? (currentCity.earlyWarningInstalled ? "EWS installed" : "Not installed") : `EWS install ${(currentCity.earlyWarningProgress / currentCity.earlyWarningTicks * 100).toFixed(0)}% complete`,
                 callback: function (e) {
-                    console.log("Button clicked");
+                    currentCity.installEarlyWarning();
                 }
             }
         ]);
