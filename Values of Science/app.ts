@@ -493,7 +493,6 @@ function triggerEarthquake() {
         earthquakes = earthquakes.sort(function () { return 0.5 - Math.random() });
         let earthquake = earthquakes[0];
         earthquake.mag = Math.random() * 3.5 + 6;
-        earthquake.mag = 6;
         // Plot on map
         let earthquakeMarker = L.icon({
             iconUrl: "data/marker_red.png",
@@ -701,8 +700,8 @@ window.onload = () => {
                 for (let city of cities) {
                     city.update();
                 }
-                // Trigger earthquake in about 4 years (could be much sooner or much later)
-                if (Math.random() < 1 / 1460) {
+                // Trigger earthquake in a bit more than 2 years (could be much sooner or much later)
+                if (Math.random() < 1 / 800) {
                     triggerEarthquake();
                 }
             }
