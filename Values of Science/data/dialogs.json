@@ -2,7 +2,7 @@
   "dialogs": [
     {
       "trigger": "intro",
-      "text": "Why are we in constant pursuit of the cutting-edge, the undiscovered, and the entirely unknown?",
+      "text": "Why do we pursue the cutting-edge, the yet-to-be-discovered, and the entirely unknown?",
       "timing": 5000
     },
     {
@@ -24,6 +24,11 @@
       "trigger": "start",
       "title": "Welcome",
       "text": "Deep beneath the Pacific Ocean off the coast of the U.S. states of Washington and Oregon lies the Cascadian subduction zone. As the Juan de Fuca tectonic plate slowly and quietly slips under the North American plate, it places into question the future of the entire Pacific Northwest region. As Kathryn Schulz’s explores in “The Really Big One,” the potential for a Cascadian earthquake is very real and long overdue. However, despite the severity of the threat to the region, the region is underprepared. Oregon didn’t have a seismic code until 1974 and only revised it to be appropriate for a magnitude 9 quake in 1994.\nOn the left panel of the game, you will play out FEMA’s actual 2016 disaster exercise for a major Cascadian earthquake dubbed “Cascadia Rising.” With a limited budget you must plan for the worst. Bring critical infrastructure up to code, build coastal defenses, install earthquake early-warning systems, and keep the people and economy of the Cascadia region safe. Science will offer you ways to minimize damage and lives lost, but at a steep cost. How will you prioritize your budget to defend against a threat that has no defined occurrence date?\n\nUnder London’s congested city streets lies Europe’s biggest ongoing engineering project. Built to relieve strain on an often overcrowded, 150-year-old metro system, Crossrail will stretch from east to west across the nation’s capital. Nova’s recent episode titled “Super Tunnel” covers the engineering challenges of burrowing underneath a complex city with large amounts of preexisting infrastructure while on a very strict timeline.\nOn the right panel of the game, you will play as Transport for London in the planning stages of the Crossrail project. You’ll be tasked with coping with increasing numbers of passengers in Greater London month after month. Science can offer you the ability to reduce the impact on the surrounding area while speeding up construction times and planning more efficient routes with higher train capacities. Your budget will be limited, however. How will you dedicate your funding in the most efficient manner to stem current demand while planning for London’s future?"
+    },
+    {
+      "trigger": "earthquake",
+      "title": "Earthquake Aftermath",
+      "text": ""
     }
   ]
 }
