@@ -84,6 +84,14 @@ section.region > .funds {
 #cascadia > .funds::before {
     content: "Budget: $";
 }
+#trigger {
+    position: absolute;
+    z-index: 1000;
+    bottom: 85px;
+    left: calc(50% - 107px);
+    font-size: 9px;
+    width: 100px;
+}
 #london {
     float: right;
 }

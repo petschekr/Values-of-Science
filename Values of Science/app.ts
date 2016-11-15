@@ -705,6 +705,7 @@ window.onload = () => {
                 // Trigger earthquake in a bit more than 2 years (could be much sooner or much later)
                 if (Math.random() < 1 / 800 && !earthquakeTriggered) {
                     earthquakeTriggered = true;
+                    trigger.disabled = true;
                     triggerEarthquake();
                 }
             }
@@ -713,22 +714,10 @@ window.onload = () => {
     })();
 
     // Button and other event handlers
-    /*let startButton = document.getElementById("start");
-    startButton.onclick = function () {
-        if (gameState === GameState.Running) {
-            gameState = GameState.Paused;
-            startButton.textContent = "Start";
-        }
-        else if (gameState === GameState.Paused) {
-            gameState = GameState.Running;
-            startButton.textContent = "Pause";
-        }
+    let trigger = document.getElementById("trigger") as HTMLButtonElement;
+    trigger.onclick = function () {
+        earthquakeTriggered = true;
+        trigger.disabled = true;
+        triggerEarthquake();
     };
-    let resetButton = document.getElementById("reset");
-    resetButton.onclick = function () {
-        gameState = GameState.Paused;
-        startButton.textContent = "Start";
-        internalDate = moment();
-        dateElement.textContent = internalDate.format("MMMM Do, Y");
-    };*/
 };
