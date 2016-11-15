@@ -187,13 +187,13 @@
       "type": "Feature",
       "properties": {
         "name": "Acton Main Line",
-        "adjacent": ["Ealing Broadway"]
+        "adjacent": ["Ealing Broadway", "Old Oak Common"]
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          51.5171
           -0.2668,
+          51.5171
         ]
       }
     },
