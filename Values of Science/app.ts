@@ -492,7 +492,7 @@ function triggerEarthquake() {
         const maxDisplacementRate = 1000000 / 4629511;
         earthquakes = earthquakes.sort(function () { return 0.5 - Math.random() });
         let earthquake = earthquakes[0];
-        earthquake.mag = Math.random() * 3.5 + 6;
+        earthquake.mag = Math.pow(Math.random(), 1 / 2) * 3.5 + 5.8;
         // Plot on map
         let earthquakeMarker = L.icon({
             iconUrl: "data/marker_red.png",
