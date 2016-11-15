@@ -116,6 +116,10 @@ class City implements CityObject {
                 this.magnitudeUpgradeProgress = 0;
                 this.magnitudeProtection += this.magnitudeUpgradeAmount;
                 alertify.success(`Finished upgrading ${this.name}`);
+
+                removeActions();
+                currentlySelectedCityIndex = null;
+                cascadiaInfo.update();
             }
         }
         if (this.earlyWarningProgress > 0) {
@@ -124,6 +128,10 @@ class City implements CityObject {
                 this.earlyWarningProgress = 0;
                 this.earlyWarningInstalled = true;
                 alertify.success(`Finished installing EWS in ${this.name}`);
+
+                removeActions();
+                currentlySelectedCityIndex = null;
+                cascadiaInfo.update();
             }
         }
     }
@@ -164,6 +172,7 @@ interface Borough {
 }
 interface StationObject {
     name: string;
+    adjacent: string[];
     lat: number;
     long: number;
     // User actions
@@ -175,6 +184,7 @@ interface StationObject {
 }
 class Station implements StationObject {
     public name: string;
+    public adjacent: string[];
     public lat: number;
     public long: number;
 
@@ -185,6 +195,9 @@ class Station implements StationObject {
 
     public tbmDropProgress = 0;
     public tbmDropTicks = 90; // 3 months
+    public tunnelProgress = 0;
+    public tunnelTicks = 0;
+    public tunnelAdjacent: Station[] = [];
 
     private initialCapacity: number = 20000000; // 20 million per year seems to be about the average
     private londonCenterDistance: number;
@@ -198,9 +211,24 @@ class Station implements StationObject {
     get tbmDropCost(): number {
         return 100000000;
     }
+    get tunnelCost(): number {
+        // Crossrail has about 73 miles of track
+        // 250 million per mile means that most but not all of the system can be built
+        const costPerMile = 250000000;
+        let cost: number = 0;
+        for (let nearbyStationName of this.adjacent) {
+            for (let station of stations) {
+                if (station.name !== nearbyStationName || (!station.isBuilt && !station.hasTBM))
+                    continue;
+                cost += Math.round(londonMap.distance([this.lat, this.long], [station.lat, station.long]) * 0.000621371192 * costPerMile);
+            }
+        }
+        return cost;
+    }
 
     constructor(stationProps: StationObject) {
         this.name = stationProps.name;
+        this.adjacent = stationProps.adjacent;
         this.lat = stationProps.lat;
         this.long = stationProps.long;
 
@@ -231,6 +259,46 @@ class Station implements StationObject {
             function () { }
         );
     }
+    tunnelTo(): void {
+        if (this.tunnelProgress > 0) {
+            alertify.error(`Tunneling is currently underway at ${this.name}`);
+            return;
+        }
+        this.tunnelTicks = 0;
+        let otherStations: string[] = [];
+        for (let nearbyStationName of this.adjacent) {
+            for (let station of stations) {
+                if (station.name !== nearbyStationName || (!station.isBuilt && !station.hasTBM))
+                    continue;
+                otherStations.push(station.name);
+                this.tunnelAdjacent.push(station);
+                // 125 feet per day
+                this.tunnelTicks += Math.round((londonMap.distance([this.lat, this.long], [station.lat, station.long]) * 0.000621371192) / (125 / 5280));
+            }
+        }
+        if (otherStations.length === 0) {
+            alertify.error(`No open stations nearby ${this.name}`);
+            return;
+        }
+        alertify.confirm(
+            "Are you sure?",
+            `Tunnels will be constructed to <b>${this.name}</b> from ${otherStations.join(", ")}. This will cost <b>£${this.tunnelCost.toLocaleString()}</b> and take <b>${this.tunnelTicks.toLocaleString()}</b> days to complete.`,
+            (function () {
+                if (londonFunds - this.tunnelCost < 0) {
+                    alertify.error("Insufficient funds");
+                    return;
+                }
+                alertify.success(`Constructing tunnels to ${this.name}`);
+                londonFunds -= this.tunnelCost;
+                this.tunnelProgress += 1;
+
+                removeActions();
+                currentlySelectedStationIndex = null;
+                londonInfo.update();
+            }).bind(this),
+            function () { }
+        );
+    }
     update(): void {
         if (this.tbmDropProgress > 0) {
             this.tbmDropProgress++;
@@ -238,6 +306,39 @@ class Station implements StationObject {
                 this.tbmDropProgress = 0;
                 this.hasTBM = true;
                 alertify.success(`Finished deploying TBM at ${this.name}`);
+
+                removeActions();
+                currentlySelectedStationIndex = null;
+                londonInfo.update();
+            }
+        }
+        if (this.tunnelProgress > 0) {
+            this.tunnelProgress++;
+            if (this.tunnelProgress >= this.tunnelTicks) {
+                this.tunnelProgress = 0;
+                let coords: any[] = this.tunnelAdjacent.map(function (station) {
+                    return [station.lat, station.long];
+                });
+                this.tunnelAdjacent.push(this);
+                for (let station of this.tunnelAdjacent) {
+                    station.isBuilt = true;
+                    coords.push([station.lat, station.long]);
+                    for (let markerInfo of markerLayers) {
+                        if (markerInfo.name === station.name) {
+                            markerInfo.marker.setOpacity(1);
+                            break;
+                        }
+                    }
+                }
+                this.tunnelAdjacent = [];
+                // Add line connecting these stations to the map
+                for (let coord of coords) {
+                    L.polyline([coord, [this.lat, this.long]], { color: "white", weight: 8 }).addTo(londonMap);
+                }
+
+                removeActions();
+                currentlySelectedStationIndex = null;
+                londonInfo.update();
             }
         }
     }
@@ -261,6 +362,7 @@ let londonInfo, cascadiaInfo;
 
 let stations: Station[] = [];
 let boroughs: Borough[] = [];
+let markerLayers: any[] = [];
 function londonInit() {
     // London initialization
 
@@ -338,7 +440,13 @@ function londonInit() {
 
         let tbmStatus: string;
         if (currentStation.tbmDropProgress === 0) {
-            if (!currentStation.hasTBM) {
+            if (currentStation.isBuilt) {
+                tbmStatus = "Station already built";
+            }
+            else if (currentStation.tunnelProgress > 0) {
+                tbmStatus = "Tunneling underway";
+            }
+            else if (!currentStation.hasTBM) {
                 tbmStatus = "Required to start tunneling";
             }
             else {
@@ -348,10 +456,32 @@ function londonInit() {
         else {
             tbmStatus = `${(currentStation.tbmDropProgress / currentStation.tbmDropTicks * 100).toFixed(0)}% complete`;
         }
+        let tunnelEnabled: boolean;
+        let tunnelStatus: string;
+        if (currentStation.isBuilt) {
+            tunnelEnabled = false;
+            tunnelStatus = "Station already built";
+        }
+        else {
+            if (currentStation.tunnelProgress === 0) {
+                if (currentStation.tunnelCost === 0) {
+                    tunnelEnabled = false;
+                    tunnelStatus = "Adjacent station not yet built";
+                }
+                else {
+                    tunnelEnabled = true;
+                    tunnelStatus = "Opens new station";
+                }
+            }
+            else {
+                tunnelEnabled = false;
+                tunnelStatus = `${(currentStation.tunnelProgress / currentStation.tunnelTicks * 100).toFixed(0)}% complete`;
+            }
+        }
         displayActions(station.name || "N/A", [
             {
                 buttonText: "Deploy TBM here",
-                buttonEnabled: !currentStation.hasTBM && currentStation.tbmDropProgress === 0,
+                buttonEnabled: !currentStation.hasTBM && currentStation.tbmDropProgress === 0 && !currentStation.isBuilt && currentStation.tunnelProgress === 0,
                 statusText: tbmStatus,
                 callback: function (e) {
                     currentStation.dropTBM();
@@ -359,10 +489,10 @@ function londonInit() {
             },
             {
                 buttonText: "Tunnel to here",
-                buttonEnabled: false,
-                statusText: "Adjacent station not yet built",
+                buttonEnabled: tunnelEnabled,
+                statusText: tunnelStatus,
                 callback: function (e) {
-                    //currentStation.tunnelTo();
+                    currentStation.tunnelTo();
                 }
             },
             {
@@ -437,7 +567,9 @@ function londonInit() {
     $.getJSON("data/crossrail.json", function (json) {
         L.geoJSON(json, {
             pointToLayer: function (feature, latlng) {
-                return L.marker(latlng, { icon: subwayStop, opacity: 0.5 });
+                let marker = L.marker(latlng, { icon: subwayStop, opacity: 0.5 });
+                markerLayers.push({ "name": feature.properties.name, "marker": marker });
+                return marker;
             },
             onEachFeature: onEachFeature
         }).addTo(londonMap);
@@ -816,6 +948,7 @@ let gameState: GameState = GameState.Paused;
 let cascadiaFunds: number = 5000000000;
 let londonFunds: number = 15900000000;
 let earthquakeTriggered: boolean = false;
+const updateTick = 500; // Half a second
 
 window.onload = () => {
     dialogInit();
@@ -834,7 +967,7 @@ window.onload = () => {
         londonFundsElement.textContent = londonFunds.toLocaleString();
 
         if (gameState === GameState.Running) {
-            if (Date.now() - lastDateUpdate > 500) {
+            if (Date.now() - lastDateUpdate > updateTick) {
                 internalDate = internalDate.add(1, "days");
                 lastDateUpdate = Date.now();
 
