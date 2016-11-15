@@ -183,6 +183,9 @@ class Station implements StationObject {
     public hasSubsidenceMonitoring: boolean = false;
     public capacity: number = 0;
 
+    public tbmDropProgress = 0;
+    public tbmDropTicks = 90; // 3 months
+
     private initialCapacity: number = 20000000; // 20 million per year seems to be about the average
     private londonCenterDistance: number;
 
@@ -192,9 +195,9 @@ class Station implements StationObject {
         let daysElapsed: number = internalDate.diff(moment(), "days");
         return Math.round(20000000 / (Math.log(this.londonCenterDistance / 12.7) / Math.LN10) + 1000000 * (daysElapsed / 365));
     }
-    /*get tbmDropCost(): number {
-
-    }*/
+    get tbmDropCost(): number {
+        return 100000000;
+    }
 
     constructor(stationProps: StationObject) {
         this.name = stationProps.name;
@@ -203,6 +206,40 @@ class Station implements StationObject {
 
         let londonCenter = [51.517741, -0.082521];
         this.londonCenterDistance = londonMap.distance([this.lat, this.long], londonCenter); // in meters
+    }
+    dropTBM(): void {
+        if (this.tbmDropProgress > 0) {
+            alertify.error(`A TBM is already deploying at ${this.name}`);
+            return;
+        }
+        alertify.confirm(
+            "Are you sure?",
+            `A tunnel boring machine (TBM) will be deployed at <b>${this.name}</b> to allow tunnel construction to adjacent stations. This will cost <b>£${this.tbmDropCost.toLocaleString()}</b> and take <b>${this.tbmDropTicks.toLocaleString()}</b> days to complete.`,
+            (function () {
+                if (londonFunds - this.tbmDropCost < 0) {
+                    alertify.error("Insufficient funds");
+                    return;
+                }
+                alertify.success(`Deploying TBM at ${this.name}`);
+                londonFunds -= this.tbmDropCost;
+                this.tbmDropProgress += 1;
+
+                removeActions();
+                currentlySelectedStationIndex = null;
+                londonInfo.update();
+            }).bind(this),
+            function () { }
+        );
+    }
+    update(): void {
+        if (this.tbmDropProgress > 0) {
+            this.tbmDropProgress++;
+            if (this.tbmDropProgress >= this.tbmDropTicks) {
+                this.tbmDropProgress = 0;
+                this.hasTBM = true;
+                alertify.success(`Finished deploying TBM at ${this.name}`);
+            }
+        }
     }
 }
 
@@ -293,14 +330,26 @@ function londonInit() {
             }
         }
         let currentStation: Station = stations[currentlySelectedStationIndex];
-        
+
+        let tbmStatus: string;
+        if (currentStation.tbmDropProgress === 0) {
+            if (!currentStation.hasTBM) {
+                tbmStatus = "Required to start tunneling";
+            }
+            else {
+                tbmStatus = "TBM deployed here";
+            }
+        }
+        else {
+            tbmStatus = `${(currentStation.tbmDropProgress / currentStation.tbmDropTicks * 100).toFixed(0)}% complete`;
+        }
         displayActions(station.name || "N/A", [
             {
-                buttonText: "Drop TBM here",
-                buttonEnabled: true,
-                statusText: "Required to start tunneling",
+                buttonText: "Deploy TBM here",
+                buttonEnabled: !currentStation.hasTBM && currentStation.tbmDropProgress === 0,
+                statusText: tbmStatus,
                 callback: function (e) {
-                    //currentStation.dropTBM();
+                    currentStation.dropTBM();
                 }
             },
             {
@@ -776,6 +825,10 @@ window.onload = () => {
                 // Update cities
                 for (let city of cities) {
                     city.update();
+                }
+                // Update stations
+                for (let station of stations) {
+                    station.update();
                 }
                 // Trigger earthquake in a bit less than 3 years (could be much sooner or much later)
                 if (Math.random() < 1 / 1000 && !earthquakeTriggered) {
