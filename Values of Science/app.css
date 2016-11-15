@@ -1,6 +1,7 @@
 ﻿html, body {
     height: 100%;
     margin: 0;
+    overflow: hidden;
 }
 body {
     font-family: "Open Sans", sans-serif;
@@ -60,8 +61,15 @@ section.region {
     width: 50%;
     box-sizing: border-box;
 }
-section.region:first-of-type {
-    border-right: 3px solid #fff;
+#middle-divider {
+    display: block;
+    width: 3px;
+    height: calc(100% - 80px);
+    position: absolute;
+    top: 0;
+    left: calc(50% - 1px);
+    z-index: 1000;
+    background-color: #fff;
 }
 section.region > h1 {
     text-align: center;
@@ -147,7 +155,7 @@ section.region > .funds {
 .action {
     display: flex;
     flex-direction: column;
-    width: 200px;
+    width: 300px;
 }
 .action > * {
     margin-bottom: 5px;

@@ -1,5 +1,7 @@
 ﻿// Leaflet.js
 declare var L: any;
+// Point-in-polygon
+declare var leafletPip: any;
 // jQuery
 declare var $: any;
 // Moment.js
@@ -160,14 +162,48 @@ interface Borough {
     population: number;
     name: string;
 }
-interface Station {
+interface StationObject {
     name: string;
+    lat: number;
+    long: number;
     // User actions
-    hasTBM?: boolean;
-    isBuilt?: boolean;
-    hasSubsidenceMonitoring?: boolean;
-    demand?: number;
-    capacity?: number;
+    hasTBM: boolean;
+    isBuilt: boolean;
+    hasSubsidenceMonitoring: boolean;
+    demand: number;
+    capacity: number;
+}
+class Station implements StationObject {
+    public name: string;
+    public lat: number;
+    public long: number;
+
+    public isBuilt: boolean = false;
+    public hasTBM: boolean = false;
+    public hasSubsidenceMonitoring: boolean = false;
+    public capacity: number = 0;
+
+    private initialCapacity: number = 20000000; // 20 million per year seems to be about the average
+    private londonCenterDistance: number;
+
+    get demand(): number {
+        // Scale demand based on distance from central London
+        // 1 million per year extra demand per year
+        let daysElapsed: number = internalDate.diff(moment(), "days");
+        return Math.round(20000000 / (Math.log(this.londonCenterDistance / 12.7) / Math.LN10) + 1000000 * (daysElapsed / 365));
+    }
+    /*get tbmDropCost(): number {
+
+    }*/
+
+    constructor(stationProps: StationObject) {
+        this.name = stationProps.name;
+        this.lat = stationProps.lat;
+        this.long = stationProps.long;
+
+        let londonCenter = [51.517741, -0.082521];
+        this.londonCenterDistance = londonMap.distance([this.lat, this.long], londonCenter); // in meters
+    }
 }
 
 let londonStart: GeoPos = {
@@ -245,19 +281,53 @@ function londonInit() {
         londonInfo.update();
     }
     function selected(e) {
-        var layer = e.target;
-        londonInfo.update(layer.feature.properties, true);
+        let layer = e.target;
+        let station: StationObject = layer.feature.properties;
+        londonInfo.update(station, true);
         currentlySelectedCityIndex = null;
         cascadiaInfo.update();
-        currentlySelectedStationIndex = stations.indexOf(layer.feature.properties);
-        displayActions(layer.feature.properties.name || "N/A", [{
-            buttonText: "Button text",
-            buttonEnabled: true,
-            statusText: "Status text",
-            callback: function (e) {
-                console.log("Button clicked");
+        for (let i = 0; i < stations.length; i++) {
+            if (stations[i].name === station.name) {
+                currentlySelectedStationIndex = i;
+                break;
             }
-        }]);
+        }
+        let currentStation: Station = stations[currentlySelectedStationIndex];
+        
+        displayActions(station.name || "N/A", [
+            {
+                buttonText: "Drop TBM here",
+                buttonEnabled: true,
+                statusText: "Required to start tunneling",
+                callback: function (e) {
+                    //currentStation.dropTBM();
+                }
+            },
+            {
+                buttonText: "Tunnel to here",
+                buttonEnabled: false,
+                statusText: "Adjacent station not yet built",
+                callback: function (e) {
+                    //currentStation.tunnelTo();
+                }
+            },
+            {
+                buttonText: "Install subsidence warning",
+                buttonEnabled: true,
+                statusText: "Prevents damage to surroundings",
+                callback: function (e) {
+                    //currentStation.installSubsidence();
+                }
+            },
+            {
+                buttonText: "Increase capacity",
+                buttonEnabled: false,
+                statusText: "Station must be built first",
+                callback: function (e) {
+                    //currentStation.increaseCapacity();
+                }
+            }
+        ]);
     }
     function mapDeselect(e) {
         // Only fired when clicking on a part of the map that isn't marked
@@ -293,6 +363,7 @@ function londonInit() {
 			fillColor: getColor(feature.properties.population)
 		};
     }
+    let boroughLayers: any[] = [];
     function onEachBorough(feature, layer) {
         layer.addEventListener("click", mapDeselect);
         layer.bindPopup(`
@@ -300,6 +371,7 @@ function londonInit() {
             <br />
             Population: ${feature.properties.population.toLocaleString()} (2013 est.)
         `);
+        boroughLayers.push(layer);
     }
 
     let subwayStop = L.icon({
@@ -316,7 +388,9 @@ function londonInit() {
             onEachFeature: onEachFeature
         }).addTo(londonMap);
         stations = stations.concat(json.features.map(function (feature) {
-            return feature.properties;
+            feature.properties.lat = feature.geometry.coordinates[1];
+            feature.properties.long = feature.geometry.coordinates[0];
+            return new Station(feature.properties);
         }));
     });
     $.getJSON("data/london-boroughs.json", function (json) {
@@ -703,8 +777,8 @@ window.onload = () => {
                 for (let city of cities) {
                     city.update();
                 }
-                // Trigger earthquake in a bit more than 2 years (could be much sooner or much later)
-                if (Math.random() < 1 / 800 && !earthquakeTriggered) {
+                // Trigger earthquake in a bit less than 3 years (could be much sooner or much later)
+                if (Math.random() < 1 / 1000 && !earthquakeTriggered) {
                     earthquakeTriggered = true;
                     trigger.disabled = true;
                     triggerEarthquake();
