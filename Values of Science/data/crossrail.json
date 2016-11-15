@@ -4,7 +4,8 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Heathrow Central"
+        "name": "Heathrow Central",
+        "adjacent": ["Heathrow Terminal 4", "Hayes & Harlington"]
       },
       "geometry": {
         "type": "Point",
@@ -17,7 +18,8 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Heathrow Terminal 4"
+        "name": "Heathrow Terminal 4",
+        "adjacent": ["Heathrow Central"]
       },
       "geometry": {
         "type": "Point",
@@ -30,7 +32,8 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Taplow"
+        "name": "Taplow",
+        "adjacent": ["Maidenhead", "Taplow"]
       },
       "geometry": {
         "type": "Point",
@@ -43,7 +46,8 @@
 	  {
       "type": "Feature",
       "properties": {
-        "name": "Burnham"
+        "name": "Burnham",
+        "adjacent": ["Taplow", "Slough"]
       },
       "geometry": {
         "type": "Point",
@@ -56,7 +60,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Slough"
+        "name": "Slough",
+        "adjacent": ["Burnham", "Langley"]
       },
       "geometry": {
         "type": "Point",
@@ -69,7 +74,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Langley"
+        "name": "Langley",
+        "adjacent": ["Slough", "Iver"]
       },
       "geometry": {
         "type": "Point",
@@ -82,7 +88,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Iver"
+        "name": "Iver",
+        "adjacent": ["Langley", "West Drayton"]
       },
       "geometry": {
         "type": "Point",
@@ -95,7 +102,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "West Drayton"
+        "name": "West Drayton",
+        "adjacent": ["Iver", "Hayes & Harlington"]
       },
       "geometry": {
         "type": "Point",
@@ -108,7 +116,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Hayes & Harlington"
+        "name": "Hayes & Harlington",
+        "adjacent": ["West Drayton", "Southall", "Heathrow Central"]
       },
       "geometry": {
         "type": "Point",
@@ -121,7 +130,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Southall"
+        "name": "Southall",
+        "adjacent": ["Hayes & Harlington", "Hanwell"]
       },
       "geometry": {
         "type": "Point",
@@ -134,7 +144,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Hanwell"
+        "name": "Hanwell",
+        "adjacent": ["Southall", "West Ealing"]
       },
       "geometry": {
         "type": "Point",
@@ -147,7 +158,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "West Ealing"
+        "name": "West Ealing",
+        "adjacent": ["Hanwell", "Ealing Broadway"]
       },
       "geometry": {
         "type": "Point",
@@ -160,7 +172,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Ealing Broadway"
+        "name": "Ealing Broadway",
+        "adjacent": ["West Ealing", "Acton Main Line"]
       },
       "geometry": {
         "type": "Point",
@@ -173,20 +186,22 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Acton Main Line"
+        "name": "Acton Main Line",
+        "adjacent": ["Ealing Broadway"]
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.2668,
           51.5171
+          -0.2668,
         ]
       }
     },
 	{
       "type": "Feature",
       "properties": {
-        "name": "Old Oak Common"
+        "name": "Old Oak Common",
+        "adjacent": ["Acton Main Line", "Paddington"]
       },
       "geometry": {
         "type": "Point",
@@ -199,7 +214,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Paddington"
+        "name": "Paddington",
+        "adjacent": ["Old Oak Common", "Bond Street"]
       },
       "geometry": {
         "type": "Point",
@@ -212,7 +228,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Bond Street"
+        "name": "Bond Street",
+        "adjacent": ["Paddington", "Tottenham Court"]
       },
       "geometry": {
         "type": "Point",
@@ -225,7 +242,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Tottenham Court"
+        "name": "Tottenham Court",
+        "adjacent": ["Bond Street", "Farringdon"]
       },
       "geometry": {
         "type": "Point",
@@ -238,7 +256,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Farringdon"
+        "name": "Farringdon",
+        "adjacent": ["Tottenham Court", "Liverpool Street"]
       },
       "geometry": {
         "type": "Point",
@@ -251,7 +270,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Liverpool Street"
+        "name": "Liverpool Street",
+        "adjacent": ["Farringdon", "Whitechapel"]
       },
       "geometry": {
         "type": "Point",
@@ -264,7 +284,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Whitechapel"
+        "name": "Whitechapel",
+        "adjacent": ["Liverpool Street", "Canary Wharf", "Stratford"]
       },
       "geometry": {
         "type": "Point",
@@ -277,7 +298,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Canary Wharf"
+        "name": "Canary Wharf",
+        "adjacent": ["Whitechapel", "Custom House"]
       },
       "geometry": {
         "type": "Point",
@@ -290,7 +312,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Custom House"
+        "name": "Custom House",
+        "adjacent": ["Canary Wharf", "Woolwich"]
       },
       "geometry": {
         "type": "Point",
@@ -303,7 +326,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Woolwich"
+        "name": "Woolwich",
+        "adjacent": ["Custom House", "Abbey Wood"]
       },
       "geometry": {
         "type": "Point",
@@ -316,7 +340,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Abbey Wood"
+        "name": "Abbey Wood",
+        "adjacent": ["Woolwich", "Gravesend"]
       },
       "geometry": {
         "type": "Point",
@@ -329,7 +354,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Gravesend"
+        "name": "Gravesend",
+        "adjacent": ["Abbey Wood"]
       },
       "geometry": {
         "type": "Point",
@@ -342,7 +368,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Stratford"
+        "name": "Stratford",
+        "adjacent": ["Whitechapel", "Maryland"]
       },
       "geometry": {
         "type": "Point",
@@ -355,7 +382,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Maryland"
+        "name": "Maryland",
+        "adjacent": ["Stratford", "Forest Gate"]
       },
       "geometry": {
         "type": "Point",
@@ -368,7 +396,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Forest Gate"
+        "name": "Forest Gate",
+        "adjacent": ["Maryland", "Manor Park"]
       },
       "geometry": {
         "type": "Point",
@@ -381,7 +410,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Manor Park"
+        "name": "Manor Park",
+        "adjacent": ["Forest Gate", "Ilford"]
       },
       "geometry": {
         "type": "Point",
@@ -394,7 +424,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Ilford"
+        "name": "Ilford",
+        "adjacent": ["Manor Park", "Seven Kings"]
       },
       "geometry": {
         "type": "Point",
@@ -407,7 +438,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Seven Kings"
+        "name": "Seven Kings",
+        "adjacent": ["Ilford", "Goodmayes"]
       },
       "geometry": {
         "type": "Point",
@@ -420,7 +452,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Goodmayes"
+        "name": "Goodmayes",
+        "adjacent": ["Seven Kings", "Chadwell Heath"]
       },
       "geometry": {
         "type": "Point",
@@ -433,7 +466,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Chadwell Heath"
+        "name": "Chadwell Heath",
+        "adjacent": ["Goodmayes", "Romford"]
       },
       "geometry": {
         "type": "Point",
@@ -446,7 +480,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Romford"
+        "name": "Romford",
+        "adjacent": ["Chadwell Heath", "Gidea Park"]
       },
       "geometry": {
         "type": "Point",
@@ -459,7 +494,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Gidea Park"
+        "name": "Gidea Park",
+        "adjacent": ["Romford", "Harold Wood"]
       },
       "geometry": {
         "type": "Point",
@@ -472,7 +508,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Harold Woof"
+        "name": "Harold Wood",
+        "adjacent": ["Gidea Park", "Brentwood"]
       },
       "geometry": {
         "type": "Point",
@@ -485,7 +522,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Brentwood"
+        "name": "Brentwood",
+        "adjacent": ["Harold Wood", "Shenfield"]
       },
       "geometry": {
         "type": "Point",
@@ -498,7 +536,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Shenfield"
+        "name": "Shenfield",
+        "adjacent": ["Brentwood"]
       },
       "geometry": {
         "type": "Point",
@@ -511,7 +550,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Reading"
+        "name": "Reading",
+        "adjacent": ["Twyford"]
       },
       "geometry": {
         "type": "Point",
@@ -524,7 +564,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Twyford"
+        "name": "Twyford",
+        "adjacent": ["Reading", "Maidenhead"]
       },
       "geometry": {
         "type": "Point",
@@ -537,7 +578,8 @@
 	{
       "type": "Feature",
       "properties": {
-        "name": "Maidenhead"
+        "name": "Maidenhead",
+        "adjacent": ["Twyford", "Taplow"]
       },
       "geometry": {
         "type": "Point",
