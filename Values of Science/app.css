@@ -5,6 +5,10 @@
 body {
     font-family: "Open Sans", sans-serif;
 }
+hr {
+    border: none;
+    border-bottom: 1px solid #bdbdbd;
+}
 
 #cover {
     position: fixed;
