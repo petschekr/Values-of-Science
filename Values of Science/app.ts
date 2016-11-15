@@ -567,6 +567,7 @@ function triggerEarthquake() {
         }
         alertify.alert(dialog.title, dialogContent, function () {
             // Allow the user to show the results again?
+            gameState = GameState.Running;
         }).set({ transition: "fade" });
     }
 }
@@ -674,6 +675,7 @@ enum GameState {
 let gameState: GameState = GameState.Paused;
 let cascadiaFunds: number = 5000000000;
 let londonFunds: number = 15900000000;
+let earthquakeTriggered: boolean = false;
 
 window.onload = () => {
     dialogInit();
@@ -701,7 +703,8 @@ window.onload = () => {
                     city.update();
                 }
                 // Trigger earthquake in a bit more than 2 years (could be much sooner or much later)
-                if (Math.random() < 1 / 800) {
+                if (Math.random() < 1 / 800 && !earthquakeTriggered) {
+                    earthquakeTriggered = true;
                     triggerEarthquake();
                 }
             }
