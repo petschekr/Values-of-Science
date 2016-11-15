@@ -285,34 +285,39 @@ function londonInit() {
             return;
         }
         if (!props) {
-            this._div.innerHTML =
-            `
+            this._div.innerHTML = `
             <h4>London Crossrail</h4>
-            <em>Hover over a proposed stop for more info</em>
-            `;
+            <em>Hover over a station for more info</em>`;
         }
         else if (!clicked) {
-            this._div.innerHTML =
-            `
+            this._div.innerHTML = `
             <h4>London Crossrail</h4>
-            <b>${props.name}</b>
+            <b>${props.name}</b>${!props.isBuilt ? " - Proposed" : ""}
             <br />
-            <em>Click to view actions</em>
-            `;
+            Capacity: ${props.capacity.toLocaleString()} | Demand: ${props.demand.toLocaleString()}
+            <br />
+            <em>Click to view actions</em>`;
         }
         else {
-            this._div.innerHTML =
-            `
+            this._div.innerHTML = `
             <h4>London Crossrail</h4>
-            <b>${props.name}</b>
-            `;
+            <b>${props.name}</b>${!props.isBuilt ? " - Proposed" : ""}
+            <br />
+            Capacity: ${props.capacity.toLocaleString()} | Demand: ${props.demand.toLocaleString()}`;
         }
     };
     londonInfo.addTo(londonMap);
 
     function showDetails(e) {
         var layer = e.target;
-        londonInfo.update(layer.feature.properties);
+        let station: Station;
+        for (let temp of stations) {
+            if (temp.name === layer.feature.properties.name) {
+                station = temp;
+                break;
+            }
+        }
+        londonInfo.update(station);
     }
     function hideDetails(e) {
         londonInfo.update();
@@ -320,9 +325,6 @@ function londonInit() {
     function selected(e) {
         let layer = e.target;
         let station: StationObject = layer.feature.properties;
-        londonInfo.update(station, true);
-        currentlySelectedCityIndex = null;
-        cascadiaInfo.update();
         for (let i = 0; i < stations.length; i++) {
             if (stations[i].name === station.name) {
                 currentlySelectedStationIndex = i;
@@ -330,6 +332,9 @@ function londonInit() {
             }
         }
         let currentStation: Station = stations[currentlySelectedStationIndex];
+        londonInfo.update(currentStation, true);
+        currentlySelectedCityIndex = null;
+        cascadiaInfo.update();
 
         let tbmStatus: string;
         if (currentStation.tbmDropProgress === 0) {
@@ -432,7 +437,7 @@ function londonInit() {
     $.getJSON("data/crossrail.json", function (json) {
         L.geoJSON(json, {
             pointToLayer: function (feature, latlng) {
-                return L.marker(latlng, { icon: subwayStop });
+                return L.marker(latlng, { icon: subwayStop, opacity: 0.5 });
             },
             onEachFeature: onEachFeature
         }).addTo(londonMap);
@@ -485,25 +490,36 @@ function cascadiaInit() {
         else if (!clicked) {
             this._div.innerHTML = `
             <h4>FEMA Cascadia Rising</h4>
-            <b>${props.name}</b>
+            <b>${props.name}</b> - ${props.magnitudeProtection.toFixed(1)} protected
             <br />
             Population: ${props.population2015.toLocaleString()} (2015 est.)
+            <br />
+            EWS installed: ${props.earlyWarningInstalled ? "Yes" : "No"}
             <br />
             <em>Click to view actions</em>`;
         }
         else {
             this._div.innerHTML = `
             <h4>FEMA Cascadia Rising</h4>
-            <b>${props.name}</b>
+            <b>${props.name}</b> - ${props.magnitudeProtection.toFixed(1)} protected
             <br />
-            Population: ${props.population2015.toLocaleString()} (2015 est.)`;
+            Population: ${props.population2015.toLocaleString()} (2015 est.)
+            <br />
+            EWS installed: ${props.earlyWarningInstalled ? "Yes" : "No"}`;
         }
     };
     cascadiaInfo.addTo(cascadiaMap);
 
     function showDetails(e) {
         var layer = e.target;
-        cascadiaInfo.update(layer.feature.properties);
+        let city: City;
+        for (let temp of cities) {
+            if (temp.name === layer.feature.properties.name) {
+                city = temp;
+                break;
+            }
+        }
+        cascadiaInfo.update(city);
     }
     function hideDetails(e) {
         cascadiaInfo.update();
@@ -511,9 +527,6 @@ function cascadiaInit() {
     function selected(e) {
         let layer = e.target;
         let city: CityObject = layer.feature.properties;
-        cascadiaInfo.update(city, true);
-        currentlySelectedStationIndex = null;
-        londonInfo.update();
         for (let i = 0; i < cities.length; i++) {
             if (cities[i].name === city.name) {
                 currentlySelectedCityIndex = i;
@@ -521,6 +534,9 @@ function cascadiaInit() {
             }
         }
         let currentCity: City = cities[currentlySelectedCityIndex];
+        cascadiaInfo.update(currentCity, true);
+        currentlySelectedStationIndex = null;
+        londonInfo.update();
 
         displayActions(city.name || "N/A", [
             {
