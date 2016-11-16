@@ -933,7 +933,7 @@ function triggerCrossrailDialog() {
     }, 0);
 
     paragraphElement.innerHTML = `
-            On ${internalDate.format("MMMM Do, Y")} after having spent <b>£${(15900000000 - londonFunds).toLocaleString()}</b>, Transport for London (TfL) has opened <b>${openStations}</b> of the <b>${stations.length}</b> proposed for the Crossrail project, meeting <b>${Math.round(capacity / demand * 100)}%</b> of current demand (<b>${demand.toLocaleString()} passengers per year</b>).
+            On ${internalDate.format("MMMM Do, Y")} (<b>${internalDate.diff(moment(), "days")}</b> days since work began) after having spent <b>£${(15900000000 - londonFunds).toLocaleString()}</b>, Transport for London (TfL) has opened <b>${openStations}</b> of the <b>${stations.length}</b> proposed for the Crossrail project, meeting <b>${Math.round(capacity / demand * 100)}%</b> of current demand (<b>${demand.toLocaleString()} passengers per year</b>).
         `;
     dialogContent.classList.add("dialog-content");
     dialogContent.appendChild(paragraphElement);
@@ -1051,7 +1051,7 @@ enum GameState {
     Running, Paused
 }
 let gameState: GameState = GameState.Paused;
-let cascadiaFunds: number = 5000000000;
+let cascadiaFunds: number = 8000000000;
 let londonFunds: number = 15900000000;
 let earthquakeTriggered: boolean = false;
 let crossrailDialogTriggered: boolean = false;
@@ -1087,7 +1087,8 @@ window.onload = () => {
                     station.update();
                 }
                 // Trigger earthquake in a bit less than 3 years (could be much sooner or much later)
-                if (!earthquakeTriggered && Math.random() < 1 / 1000) {
+                // A one year prep period is guaranteed
+                if (!earthquakeTriggered && internalDate.diff(moment(), "days") >= 365 && Math.random() < 1 / 1000) {
                     earthquakeTriggered = true;
                     trigger.disabled = true;
                     triggerEarthquake();
