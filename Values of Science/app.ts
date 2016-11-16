@@ -198,6 +198,8 @@ class Station implements StationObject {
     public tunnelProgress = 0;
     public tunnelTicks = 0;
     public tunnelAdjacent: Station[] = [];
+    public subsidenceMonitoringProgress = 0;
+    public subsidenceMonitoringTicks = 30;
 
     private initialCapacity: number = 20000000; // 20 million per year seems to be about the average
     private londonCenterDistance: number;
@@ -209,7 +211,7 @@ class Station implements StationObject {
         return Math.round(20000000 / (Math.log(this.londonCenterDistance / 12.7) / Math.LN10) + 1000000 * (daysElapsed / 365));
     }
     get tbmDropCost(): number {
-        return 100000000;
+        return 350000000;
     }
     get tunnelCost(): number {
         // Crossrail has about 73 miles of track
@@ -224,6 +226,9 @@ class Station implements StationObject {
             }
         }
         return cost;
+    }
+    get subsidenceMonitoringCost(): number {
+        return Math.round(this.demand * 5);
     }
 
     constructor(stationProps: StationObject) {
@@ -299,6 +304,30 @@ class Station implements StationObject {
             function () { }
         );
     }
+    installSubsidence(): void {
+        if (this.subsidenceMonitoringProgress > 0) {
+            alertify.error(`Subsidence monitoring is already being installed at ${this.name}`);
+            return;
+        }
+        alertify.confirm(
+            "Are you sure?",
+            `Subsidence monitoring equipment will be installed at <b>${this.name}</b> to detect and prevent damage to surrounding buildings and infrastructure as construction occurs. This will cost <b>£${this.subsidenceMonitoringCost.toLocaleString()}</b> and take <b>${this.subsidenceMonitoringTicks.toLocaleString()}</b> days to complete.`,
+            (function () {
+                if (londonFunds - this.tbmDropCost < 0) {
+                    alertify.error("Insufficient funds");
+                    return;
+                }
+                alertify.success(`Installing subsidence monitoring at ${this.name}`);
+                londonFunds -= this.subsidenceMonitoringCost;
+                this.subsidenceMonitoringProgress += 1;
+
+                removeActions();
+                currentlySelectedStationIndex = null;
+                londonInfo.update();
+            }).bind(this),
+            function () { }
+        );
+    }
     update(): void {
         if (this.tbmDropProgress > 0) {
             this.tbmDropProgress++;
@@ -312,8 +341,29 @@ class Station implements StationObject {
                 londonInfo.update();
             }
         }
+        if (this.subsidenceMonitoringProgress > 0) {
+            this.subsidenceMonitoringProgress++;
+            if (this.subsidenceMonitoringProgress >= this.subsidenceMonitoringTicks) {
+                this.subsidenceMonitoringProgress = 0;
+                this.hasSubsidenceMonitoring = true;
+                alertify.success(`Finished installing subsidence monitoring at ${this.name}`);
+
+                removeActions();
+                currentlySelectedStationIndex = null;
+                londonInfo.update();
+            }
+        }
         if (this.tunnelProgress > 0) {
             this.tunnelProgress++;
+            // Assess possible damage costs
+            if (!this.hasSubsidenceMonitoring && Math.random() < 1 / 150) {
+                let penalty = Math.round(Math.random() * 400000000 + 100000000);
+                londonFunds -= penalty;
+                if (londonFunds < 0)
+                    londonFunds = 0;
+                alertify.error(`Subsidence occurred at ${this.name}. Penalty of ${penalty.toLocaleString()} assessed.`);
+            }
+
             if (this.tunnelProgress >= this.tunnelTicks) {
                 this.tunnelProgress = 0;
                 let coords: any[] = this.tunnelAdjacent.map(function (station) {
@@ -322,6 +372,7 @@ class Station implements StationObject {
                 this.tunnelAdjacent.push(this);
                 for (let station of this.tunnelAdjacent) {
                     station.isBuilt = true;
+                    station.capacity = station.initialCapacity;
                     coords.push([station.lat, station.long]);
                     for (let markerInfo of markerLayers) {
                         if (markerInfo.name === station.name) {
@@ -396,7 +447,7 @@ function londonInit() {
             <h4>London Crossrail</h4>
             <b>${props.name}</b>${!props.isBuilt ? " - Proposed" : ""}
             <br />
-            Capacity: ${props.capacity.toLocaleString()} | Demand: ${props.demand.toLocaleString()}
+            Capacity: ${props.capacity.toLocaleString()} / yr | Demand: ${props.demand.toLocaleString()} / yr
             <br />
             <em>Click to view actions</em>`;
         }
@@ -405,7 +456,7 @@ function londonInit() {
             <h4>London Crossrail</h4>
             <b>${props.name}</b>${!props.isBuilt ? " - Proposed" : ""}
             <br />
-            Capacity: ${props.capacity.toLocaleString()} | Demand: ${props.demand.toLocaleString()}`;
+            Capacity: ${props.capacity.toLocaleString()} / yr | Demand: ${props.demand.toLocaleString()} / yr`;
         }
     };
     londonInfo.addTo(londonMap);
@@ -478,6 +529,26 @@ function londonInit() {
                 tunnelStatus = `${(currentStation.tunnelProgress / currentStation.tunnelTicks * 100).toFixed(0)}% complete`;
             }
         }
+        let subsidenceEnabled: boolean;
+        let subsidenceStatus: string;
+        if (currentStation.hasSubsidenceMonitoring) {
+            subsidenceEnabled = false;
+            subsidenceStatus = "Already installed";
+        }
+        else if (currentStation.subsidenceMonitoringProgress > 0) {
+            subsidenceEnabled = false;
+            subsidenceStatus = `${(currentStation.subsidenceMonitoringProgress / currentStation.subsidenceMonitoringTicks * 100).toFixed(0)}% complete`;
+        }
+        else {
+            if (currentStation.isBuilt) {
+                subsidenceEnabled = false;
+                subsidenceStatus = "Station already built";
+            }
+            else {
+                subsidenceEnabled = true;
+                subsidenceStatus = "Prevents damage to surroundings";
+            }
+        }
         displayActions(station.name || "N/A", [
             {
                 buttonText: "Deploy TBM here",
@@ -497,10 +568,10 @@ function londonInit() {
             },
             {
                 buttonText: "Install subsidence warning",
-                buttonEnabled: true,
-                statusText: "Prevents damage to surroundings",
+                buttonEnabled: subsidenceEnabled,
+                statusText: subsidenceStatus,
                 callback: function (e) {
-                    //currentStation.installSubsidence();
+                    currentStation.installSubsidence();
                 }
             },
             {
