@@ -361,7 +361,7 @@ class Station implements StationObject {
                 londonFunds -= penalty;
                 if (londonFunds < 0)
                     londonFunds = 0;
-                alertify.error(`Subsidence occurred at ${this.name}. Penalty of ${penalty.toLocaleString()} assessed.`);
+                alertify.error(`Subsidence occurred at ${this.name}. Penalty of £${penalty.toLocaleString()} assessed.`);
             }
 
             if (this.tunnelProgress >= this.tunnelTicks) {
@@ -914,6 +914,41 @@ function triggerEarthquake() {
         }).set({ transition: "fade" });
     }
 }
+function triggerCrossrailDialog() {
+    gameState = GameState.Paused;
+    let dialogContent = document.createElement("div");
+    let dialog = dialogs.filter(function (dialog) {
+        return dialog.trigger === "postcrossrail";
+    })[0];
+    let paragraphElement = document.createElement("p");
+    let capacity = 0;
+    let demand = 0;
+    let openStations = stations.reduce(function (open: number, currentStation: Station): number {
+        demand += currentStation.demand;
+        if (currentStation.isBuilt) {
+            open++;
+            capacity += currentStation.capacity;
+        }
+        return open;
+    }, 0);
+
+    paragraphElement.innerHTML = `
+            On ${internalDate.format("MMMM Do, Y")} after having spent <b>£${(15900000000 - londonFunds).toLocaleString()}</b>, Transport for London (TfL) has opened <b>${openStations}</b> of the <b>${stations.length}</b> proposed for the Crossrail project, meeting <b>${Math.round(capacity / demand * 100)}%</b> of current demand (<b>${demand.toLocaleString()} passengers per year</b>).
+        `;
+    dialogContent.classList.add("dialog-content");
+    dialogContent.appendChild(paragraphElement);
+    dialogContent.appendChild(document.createElement("hr"));
+    for (let paragraph of dialog.text.split("\n")) {
+        paragraphElement = document.createElement("p");
+        paragraphElement.textContent = paragraph;
+        dialogContent.classList.add("dialog-content");
+        dialogContent.appendChild(paragraphElement);
+    }
+    alertify.alert(dialog.title, dialogContent, function () {
+        // Allow the user to show the results again?
+        gameState = GameState.Running;
+    }).set({ transition: "fade" });
+}
 
 interface Action {
     statusText: string;
@@ -1019,6 +1054,7 @@ let gameState: GameState = GameState.Paused;
 let cascadiaFunds: number = 5000000000;
 let londonFunds: number = 15900000000;
 let earthquakeTriggered: boolean = false;
+let crossrailDialogTriggered: boolean = false;
 const updateTick = 500; // Half a second
 
 window.onload = () => {
@@ -1051,10 +1087,15 @@ window.onload = () => {
                     station.update();
                 }
                 // Trigger earthquake in a bit less than 3 years (could be much sooner or much later)
-                if (Math.random() < 1 / 1000 && !earthquakeTriggered) {
+                if (!earthquakeTriggered && Math.random() < 1 / 1000) {
                     earthquakeTriggered = true;
                     trigger.disabled = true;
                     triggerEarthquake();
+                }
+                // Trigger Crossrail dialog after 5 years
+                if (!crossrailDialogTriggered && internalDate.diff(moment(), "days") >= 500) {
+                    crossrailDialogTriggered = true;
+                    triggerCrossrailDialog();
                 }
             }
         }
@@ -1068,4 +1109,9 @@ window.onload = () => {
         trigger.disabled = true;
         triggerEarthquake();
     };
+    let trigger2 = document.getElementById("trigger2") as HTMLButtonElement;
+    trigger2.onclick = function () {
+        crossrailDialogTriggered = true;
+        triggerCrossrailDialog();
+    }
 };

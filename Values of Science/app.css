@@ -104,6 +104,13 @@ section.region > .funds {
     font-size: 9px;
     width: 100px;
 }
+#trigger2 {
+    position: absolute;
+    z-index: 1000;
+    bottom: 85px;
+    left: calc(50% + 8px);
+    font-size: 9px;
+}
 #london {
     float: right;
 }
