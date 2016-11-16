@@ -573,7 +573,7 @@ function londonInit() {
                 callback: function (e) {
                     currentStation.installSubsidence();
                 }
-            },
+            }/*,
             {
                 buttonText: "Increase capacity",
                 buttonEnabled: false,
@@ -581,7 +581,7 @@ function londonInit() {
                 callback: function (e) {
                     //currentStation.increaseCapacity();
                 }
-            }
+            }*/
         ]);
     }
     function mapDeselect(e) {
