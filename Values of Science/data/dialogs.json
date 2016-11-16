@@ -33,7 +33,7 @@
     {
       "trigger": "postcrossrail",
       "title": "Crossrail Progress Report",
-      "text": "More Crossrail info"
+      "text": "Crossrail is one of London’s most ambitious engineering projects in history. The 73 mile, £15.9 billion project is expected to start operation in phases from December 2018 to December 2019 after multiple proposals and false starts and more than ten years of construction. In Nova’s “Super Tunnel” documentary on the challenges facing the Crossrail project, one of the most important issues facing the engineers was keeping disruption to the surrounding areas that Crossrail passes through to a minimum. For example, Nova describes, “digging under a city is a delicate operation. The loose ground around freshly dug tunnels could settle unevenly potentially tilting and damaging buildings. So Crossrail’s engineers use a network of lasers and targets capable of registering even a millimeter of movement in any of the buildings.” This provides the inspiration for the subsidence monitoring systems that the player can choose to install while constructing stations and tunnels. Subsidence enough to cause damage occurs randomly so the player can minimize costs and delays by not installing the detection system. However, if subsidence and damage to surrounding structures does occur, a heavy penalty is assessed that is much greater than the cost of the monitoring system in the first place. Ultimately, like most decisions in science, engineering, and gaming, this choice falls to the player."
     }
   ]
 }
